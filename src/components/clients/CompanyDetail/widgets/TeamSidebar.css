@@ -1,0 +1,131 @@
+.team-sidebar {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+}
+
+.team-tabs {
+  display: flex;
+  background: #F5F5F5;
+  padding: 2px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.team-tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8B949C;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.team-tab-btn.active {
+  background: white;
+  color: #2F80ED;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04), 0 2px 2px rgba(0, 0, 0, 0.02);
+}
+
+.team-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.team-member-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.member-avatar-box {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.summary-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 50%;
+}
+
+.avatar-stack {
+  display: flex;
+  align-items: center;
+}
+
+.avatar-stack img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid white;
+  margin-left: -38px;
+}
+
+.avatar-stack img:first-child {
+  margin-left: 0;
+}
+
+.lead-crown {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #F19100;
+  font-size: 20px;
+}
+
+.member-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #525F6A;
+  white-space: nowrap;
+}
+
+.member-name.summary-text {
+  color: #2F80ED;
+}
+
+.add-team-btn {
+  background: #F5F5F5;
+  border: none;
+  border-radius: 6px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #182939;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.add-team-btn:hover {
+  background: #EDEDED;
+}

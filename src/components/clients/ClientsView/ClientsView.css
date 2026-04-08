@@ -1,0 +1,113 @@
+.clients-view {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.clients-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--stroke-gray);
+  background: var(--white);
+}
+
+.clients-search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--white);
+  border: 1px solid #E6E6E6;
+  border-radius: 6px;
+  width: 280px;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: var(--icon-gray-75);
+}
+
+.clients-search-input {
+  border: none;
+  background: none;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--black);
+  width: 100%;
+  outline: none;
+}
+
+.clients-search-input::placeholder {
+  color: #73757A;
+}
+
+.clients-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.secondary-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--white);
+  border: 1px solid var(--stroke-gray);
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--black);
+  transition: all 0.2s ease;
+}
+
+.secondary-action-btn:hover {
+  background: var(--light-gray);
+}
+
+.secondary-action-btn .iconify {
+  font-size: 20px;
+}
+
+.primary-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--blue);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white);
+  transition: all 0.2s ease;
+}
+
+.primary-action-btn:hover {
+  background: #2563EB;
+  box-shadow: 0 4px 12px rgba(47, 128, 237, 0.2);
+}
+
+.primary-action-btn .iconify {
+  font-size: 20px;
+}
+
+.clients-content {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--white);
+  padding-bottom: 80px; /* Space for footer */
+}

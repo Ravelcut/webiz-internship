@@ -1,0 +1,124 @@
+.advanced-entity-dropdown {
+  position: relative;
+  width: 400px;
+  height: 360px;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.advanced-input-wrapper {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  border: 1px solid #D9E2EE;
+  border-radius: 8px;
+  padding: 12px 12px 0px;
+  box-sizing: border-box;
+}
+
+.input-label-float {
+  position: absolute;
+  top: -8px;
+  left: 12px;
+  background: #FFFFFF;
+  padding: 0 4px;
+}
+
+.input-label-float span {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #687A9E;
+}
+
+.input-value-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.type-icon-small {
+  font-size: 16px;
+  color: #8B949C;
+}
+
+.input-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.input-avatar img {
+  width: 100%;
+  height: 100%;
+}
+
+.input-name {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  color: #182939;
+}
+
+.input-chevron {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  font-size: 24px;
+  color: #687A9E;
+}
+
+.advanced-divider {
+  width: 100%;
+  height: 1px;
+  background: #F5F8FD;
+}
+
+.advanced-entity-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.advanced-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px 8px 8px;
+  gap: 12px;
+  height: 48px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  box-sizing: border-box;
+}
+
+.advanced-item.active {
+  background: #F9F9FB;
+}
+
+.item-avatar-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-name {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 32px;
+  color: #182939;
+}

@@ -1,0 +1,85 @@
+.tab-bar {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 24px;
+  height: 56px;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tab-group-left {
+  display: flex;
+  align-items: flex-end;
+  gap: 24px; /* Figma specification */
+}
+
+.tab-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0;
+  height: 56px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  min-width: 80px;
+}
+
+.tab-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Figma specification for Frame 8 */
+  padding: 16px 0 14px;
+}
+
+.tab-icon {
+  font-size: 16px;
+  color: #B4BDCE;
+  transition: color 0.2s;
+}
+
+.tab-label {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #B4BDCE; /* Inactive color from Figma */
+  transition: color 0.2s;
+}
+
+.tab-item.active .tab-label,
+.tab-item:hover .tab-label {
+  color: #525F6A; /* Active/Hover color from Figma */
+}
+
+.tab-item.active .tab-icon,
+.tab-item:hover .tab-icon {
+  color: #525F6A;
+}
+
+.tab-slider {
+  width: 100%;
+  height: 2px;
+  border-radius: 2px 2px 0px 0px;
+  background: transparent;
+  position: absolute;
+  bottom: 0;
+}
+
+.tab-item.active .tab-slider {
+  background: #2F80ED; /* Blue slider for active state */
+}
+
+.tab-divider {
+  width: 0;
+  height: 16px;
+  border-left: 1px solid #B4BDCE;
+  margin: 0 24px;
+  align-self: center;
+  opacity: 0.5;
+}

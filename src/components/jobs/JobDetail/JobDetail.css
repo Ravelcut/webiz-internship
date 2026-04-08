@@ -1,0 +1,517 @@
+.job-detail-view {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #F4F6F8;
+}
+
+.job-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28px;
+  height: 64px;
+  background: #FFFFFF;
+  z-index: 100;
+}
+
+.job-detail-header .title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.job-detail-header .header-icon-main {
+  font-size: 24px;
+  color: #2F80ED;
+}
+
+.job-detail-header .header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #36475F;
+  margin: 0;
+}
+
+.job-detail-header .header-right .header-icon-btns {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.job-detail-header .icon-badge-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #F5F8FC;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #687A9E;
+  cursor: pointer;
+}
+
+.job-detail-header .user-profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2F80ED;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.job-detail-header .project-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.job-detail-header .project-name {
+  font-size: 14px;
+  color: #182939;
+  font-weight: 500;
+}
+
+.job-detail-nav {
+  padding: 16px 24px;
+  border-bottom: 1px solid #EAEBF0;
+}
+
+.back-link-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  color: #687A9E;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.back-link-btn:hover {
+  background: #F5F8FC;
+  color: #2F80ED;
+}
+
+.job-detail-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.job-content-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 128px);
+}
+
+/* Sub-header */
+.job-subheader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  border-bottom: 1px solid #EAEBF0;
+}
+
+.subheader-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.job-selector-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.job-tag-icon {
+  font-size: 20px;
+  color: #2F80ED;
+}
+
+.current-job-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #182939;
+}
+
+.dropdown-arrow {
+  font-size: 16px;
+  color: #687A9E;
+}
+
+.job-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(8, 172, 22, 0.1);
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.job-status-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #08AC16;
+}
+
+.job-status-pill span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #182939;
+}
+
+.job-status-pill svg {
+  font-size: 14px;
+  color: #687A9E;
+}
+
+.job-tabs {
+  display: flex;
+  gap: 24px;
+  height: 100%;
+}
+
+.job-tab-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #687A9E;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
+  height: 100%;
+}
+
+.job-tab-btn.active {
+  color: #182939;
+}
+
+.job-tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #2F80ED;
+}
+
+.subheader-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.view-mode-toggles {
+  display: flex;
+  background: #F5F5F8;
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.mode-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #687A9E;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.mode-btn.active {
+  background: #FFFFFF;
+  color: #2F80ED;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.view-job-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 40px;
+  background: #F5F5F8;
+  border: none;
+  border-radius: 6px;
+  color: #182939;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.more-actions-btn {
+  width: 40px;
+  height: 40px;
+  background: #F5F5F8;
+  border: none;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #182939;
+  cursor: pointer;
+}
+
+/* Table Toolbar */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 240px;
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #EAEBF0;
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: #687A9E;
+}
+
+.search-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  color: #182939;
+  flex: 1;
+}
+
+.checkbox-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.checkbox-filter input {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #D9E2EE;
+  border-radius: 4px;
+}
+
+.checkbox-filter span {
+  font-size: 14px;
+  color: #182939;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 40px;
+  background: #FFFFFF;
+  border: 1px solid #EAEBF0;
+  border-radius: 6px;
+  color: #182939;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Table */
+.candidates-list-container {
+  flex: 1;
+}
+
+.job-candidates-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.job-candidates-table th {
+  text-align: left;
+  padding: 12px 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(24, 41, 57, 0.5);
+  border-bottom: 1px solid #EAEBF0;
+  background: white;
+}
+
+.job-candidates-table th svg {
+  font-size: 14px;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+.candidate-row {
+  border-bottom: 1px solid #EAEBF0;
+  transition: background 0.2s;
+}
+
+.candidate-row:hover {
+  background: #F8FAFC;
+}
+
+.candidate-row td {
+  padding: 12px 24px;
+  font-size: 13px;
+  color: #182939;
+}
+
+.candidate-avatar-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.candidate-avatar-info img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.name-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: #182939;
+}
+
+.role-text {
+  font-size: 12px;
+  color: rgba(24, 41, 57, 0.5);
+}
+
+.skills-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(104, 122, 158, 0.1);
+  border-radius: 6px;
+}
+
+.skill-tag.extra {
+  font-weight: 500;
+  color: #182939;
+}
+
+.skill-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #182939;
+  opacity: 0.75;
+}
+
+.skill-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #8B949C;
+  opacity: 0.5;
+}
+
+.skill-years {
+  font-size: 12px;
+  color: rgba(24, 41, 57, 0.5);
+}
+
+.exp-val {
+  font-weight: 500;
+}
+
+.score-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 253px;
+}
+
+.score-label {
+  font-size: 12px;
+  color: #687A9E;
+  width: 62px;
+}
+
+.progress-bar-bg {
+  flex: 1;
+  height: 4px;
+  background: #F5F5F8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.score-percent {
+  font-size: 14px;
+  font-weight: 500;
+  color: #182939;
+  width: 30px;
+}
+
+.stage-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.stage-pill svg {
+  font-size: 16px;
+}

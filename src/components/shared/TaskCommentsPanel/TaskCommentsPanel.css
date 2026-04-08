@@ -1,0 +1,375 @@
+.tcp-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease;
+}
+
+.tcp-panel {
+  width: 600px;
+  height: 100vh;
+  background: #FFFFFF;
+  box-shadow: -4px 0px 24px rgba(19, 19, 20, 0.1);
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.tcp-header {
+  height: 76px;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #E6E6E6;
+  flex-shrink: 0;
+}
+
+.tcp-header-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #131314;
+}
+
+.tcp-close-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #F5F8FC;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #687A9E;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tcp-close-btn:hover {
+  background: #EAF2FD;
+  color: #182939;
+}
+
+.tcp-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tcp-about-task {
+  background: #F6F8FB;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tcp-about-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tcp-about-label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #131314;
+}
+
+.tcp-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.tcp-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #FFFFFF;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #182939;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.tcp-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.tcp-task-title-box {
+  background: #FFFFFF;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #EAEBF0;
+}
+
+.tcp-task-title-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #182939;
+  margin: 0;
+}
+
+.tcp-divider {
+  height: 1px;
+  background: #EAEBF0;
+  width: 100%;
+}
+
+.tcp-input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tcp-textarea-wrapper {
+  position: relative;
+  background: #FFFFFF;
+  border: 1px solid #D9E2EE;
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.2s;
+}
+
+.tcp-textarea-wrapper:focus-within {
+  border-color: #2F80ED;
+}
+
+.tcp-textarea-wrapper textarea {
+  width: 100%;
+  height: 80px;
+  border: none;
+  resize: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: #182939;
+}
+
+.tcp-textarea-wrapper textarea::placeholder {
+  color: #B4BDCE;
+}
+
+.tcp-input-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #F0F2F5;
+}
+
+.tcp-attach-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: #2F80ED;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tcp-char-count {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  color: #8B949C;
+}
+
+.tcp-input-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.tcp-clear-btn {
+  background: none;
+  border: none;
+  color: #687A9E;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tcp-submit-btn {
+  background: #2F80ED;
+  color: #FFFFFF;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tcp-submit-btn:disabled {
+  background: #B4BDCE;
+  cursor: not-allowed;
+}
+
+.tcp-comments-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.tcp-comment-item {
+  display: flex;
+  gap: 16px;
+}
+
+.tcp-comment-timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 12px;
+}
+
+.tcp-timeline-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #2F80ED;
+  border-radius: 50%;
+  background: #FFFFFF;
+  z-index: 1;
+}
+
+.tcp-timeline-line {
+  width: 2px;
+  flex: 1;
+  background: #F0F2F5;
+  margin-top: -2px;
+}
+
+.tcp-comment-content {
+  flex: 1;
+  padding-bottom: 32px;
+}
+
+.tcp-comment-date {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #8B949C;
+  margin-bottom: 12px;
+  margin-top: -2px;
+}
+
+.tcp-comment-card {
+  background: #F7F9FC;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.tcp-comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.tcp-author-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tcp-author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.tcp-author-name {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #131314;
+}
+
+.tcp-comment-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.tcp-icon-btn {
+  background: none;
+  border: none;
+  color: #687A9E;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.tcp-icon-btn:hover {
+  background: #EAF2FD;
+  color: #182939;
+}
+
+.tcp-comment-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 22px;
+  color: #525F6A;
+  margin: 0;
+}
+
+.tcp-reply-btn {
+  margin-top: 12px;
+  background: #FFFFFF;
+  border: 1px solid #EAEBF0;
+  padding: 6px 16px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #525F6A;
+  cursor: pointer;
+  width: 100%;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.tcp-reply-btn:hover {
+  background: #F5F8FC;
+  border-color: #D9E2EE;
+}

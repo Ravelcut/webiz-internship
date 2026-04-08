@@ -1,0 +1,360 @@
+.candidates-table-container {
+  overflow-x: auto;
+  background: transparent;
+  padding: 0;
+}
+
+.candidates-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* Gap between rows */
+  font-family: 'Inter', sans-serif;
+}
+
+.candidates-table th {
+  text-align: left;
+  padding: 8px 16px;
+  color: #36475F;
+  font-weight: 500;
+  font-size: 13px;
+  opacity: 0.7;
+  border-bottom: 0.625px solid #E5E9F2;
+  white-space: nowrap;
+}
+
+.candidates-table tr.candidate-row {
+  background: #FFFFFF;
+  height: 60px;
+}
+
+.candidates-table td {
+  padding: 0 16px;
+  border-top: 0.625px solid #E5E9F2;
+  border-bottom: 0.625px solid #E5E9F2;
+  color: #36475F;
+  vertical-align: middle;
+}
+
+/* Rounded corners for the row */
+.candidates-table td:first-child {
+  border-left: 0.625px solid #E5E9F2;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.candidates-table td:last-child {
+  border-right: 0.625px solid #E5E9F2;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Checkbox Column */
+.checkbox-col, .checkbox-cell {
+  width: 50px;
+  text-align: center;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #E1E4E8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Full Name Column */
+.name-cell {
+  min-width: 200px;
+}
+
+.candidate-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.candidate-avatar-placeholder, .candidate-avatar-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.candidate-avatar-placeholder {
+  background: #F0F5FA;
+  color: #36475F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.candidate-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.candidate-name {
+  font-weight: 500;
+  font-size: 13px;
+  color: #36475F;
+}
+
+.candidate-role {
+  font-size: 11px;
+  color: #687A9E;
+}
+
+/* Message Icon Column */
+.icon-col, .messages-cell {
+  width: 60px;
+  text-align: center;
+}
+
+.message-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.msg-icon {
+  font-size: 20px;
+  color: #B4BBC5;
+}
+
+.msg-counter {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #687A9E;
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 4px;
+  border-radius: 8px;
+  min-width: 14px;
+  text-align: center;
+}
+
+/* HR Column */
+.hr-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hr-avatar-mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #EAEBF0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: #36475F;
+  overflow: hidden;
+}
+
+.hr-avatar-mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hr-name {
+  font-size: 13px;
+}
+
+/* Status Column */
+.status-pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 140px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #EAEBF0;
+  border-radius: 4px;
+  background: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+  text-align: center;
+}
+
+.status-arrow {
+  font-size: 12px;
+}
+
+/* Contact Column */
+.contact-icons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.contact-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid #E5E9F2;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.contact-icon {
+  font-size: 16px;
+  color: #687A9E;
+  cursor: pointer;
+}
+
+.contact-icon.at-symbol {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.contact-icon.linkedin {
+  font-size: 20px;
+}
+
+/* Job Column */
+.job-link-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.job-link-icon {
+  font-size: 18px;
+  color: #687A9E;
+  cursor: pointer;
+}
+
+/* CV Column */
+.cv-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #36475F;
+  cursor: pointer;
+}
+
+.cv-icon {
+  font-size: 18px;
+  color: #008CE3;
+}
+
+.cv-filename {
+  font-size: 13px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Action Column */
+.action-cell {
+  text-align: center;
+}
+
+.action-menu-btn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #687A9E;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-menu-btn:hover {
+  background: #F5F5F8;
+}
+
+/* Dropdown Menu */
+.action-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 180px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shadow-premium {
+  box-shadow: 0px 4px 51px -20px rgba(107, 124, 152, 0.15), 0px 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  border-radius: 6px;
+  color: #36475F;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.dropdown-item:hover {
+  background: #F4F6F8;
+}
+
+.dropdown-item svg {
+  font-size: 18px;
+  color: #687A9E;
+}
+
+.dropdown-item.highlight {
+  font-weight: 500;
+}
+
+.dropdown-item.delete {
+  color: #ED5757;
+}
+
+.dropdown-item.delete svg {
+  color: #ED5757;
+}
+
+.menu-divider {
+  height: 1px;
+  background: #E5E9F2;
+  margin: 4px 0;
+}
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.unassigned, .no-cv {
+  color: #B4BBC5;
+  font-style: italic;
+}

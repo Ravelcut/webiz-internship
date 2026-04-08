@@ -1,0 +1,269 @@
+.task-list-view {
+  display: flex;
+  flex-direction: column;
+  padding: 0 0 32px;
+  gap: 40px;
+}
+
+.task-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  padding: 8px 0 8px 40px;
+  gap: 8px;
+  height: 52px;
+}
+
+.group-title {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 36px;
+  color: var(--black-75);
+}
+
+.group-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: var(--white);
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: var(--white);
+  box-shadow: 0px 1px 0px var(--stroke-gray);
+}
+
+.cell-checkbox {
+  justify-content: center;
+  width: 40px;
+  padding: 6px 16px;
+}
+
+.checkbox-icon {
+  font-size: 16px;
+  color: var(--icon-gray-75);
+}
+
+.cell-name {
+  flex: 1;
+  padding: 8px 16px;
+  min-width: 0;
+}
+
+.task-title {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--black);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cell-comments {
+  width: 48px;
+  padding: 0 8px;
+  justify-content: center;
+}
+
+.comment-counter-wrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.comment-msg-icon {
+  font-size: 20px;
+  color: #B4BBC5;
+}
+
+.comments-badge {
+  position: absolute;
+  top: -2px;
+  right: -4px;
+  width: 14px;
+  height: 14px;
+  background: var(--icon-gray);
+  border-radius: 7px;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell-priority {
+  width: 150px;
+  padding: 4px 16px;
+}
+
+.priority-pill {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px 4px 4px;
+  gap: 2px;
+  border: 1px solid var(--stroke-gray);
+  border-radius: 4px;
+  background: var(--white);
+}
+
+.priority-dot-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.priority-text {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 24px;
+  color: var(--black);
+  opacity: 0.5;
+}
+
+.cell-assignee {
+  width: 240px;
+  padding: 4px 16px;
+}
+
+.assignee-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assignee-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #c9d6e3 0%, #a8b8cc 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-circle span {
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--white);
+}
+
+.assignee-name {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 32px;
+  color: var(--black);
+  white-space: nowrap;
+}
+
+.entity-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4.63px;
+}
+
+.entity-icon {
+  font-size: 15px;
+  color: var(--black-50);
+}
+
+.cell-due {
+  width: 217px;
+  padding: 4px 16px;
+}
+
+.due-overdue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  gap: 8px;
+  background: var(--danger);
+  border-radius: 6px;
+}
+
+.due-overdue-text {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--white);
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+.alarm-icon {
+  font-size: 16px;
+  color: var(--white);
+}
+
+.due-normal {
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--black);
+  font-feature-settings: 'tnum' on, 'lnum' on;
+}
+
+.cell-status {
+  width: 124px;
+  padding: 4px 16px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.task-row:hover {
+  background: #FAFBFE;
+}
+
+.task-row:hover .cell {
+  background: #FAFBFE;
+}
+
+.task-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
