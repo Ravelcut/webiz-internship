@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Icon } from '@iconify/react';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './KanbanBoard.css';
@@ -9,14 +11,24 @@ const entityIcons = {
   'file-user': 'solar:file-text-linear',
 };
 
-const KanbanCard = ({ card, onOpenComments }) => {
+const KanbanCard = ({ card, onOpenComments, provided, snapshot }) => {
   const initials = card.assignee
     ? card.assignee.split(' ').map((n) => n[0]).join('').slice(0, 2)
     : '';
 
+  const style = provided ? {
+    ...provided.draggableProps.style,
+  } : {};
+
   if (card.isEditing) {
     return (
-      <div className="kanban-card kanban-card--editing">
+      <div 
+        className="kanban-card kanban-card--editing"
+        ref={provided?.innerRef}
+        {...provided?.draggableProps}
+        {...provided?.dragHandleProps}
+        style={style}
+      >
         <div className="card-top-row">
           <div className="card-label-input">
             <span className="label-placeholder">Add Label</span>
@@ -45,7 +57,13 @@ const KanbanCard = ({ card, onOpenComments }) => {
   }
 
   return (
-    <div className="kanban-card">
+    <div 
+      className={`kanban-card ${snapshot?.isDragging ? 'is-dragging' : ''}`}
+      ref={provided?.innerRef}
+      {...provided?.draggableProps}
+      {...provided?.dragHandleProps}
+      style={style}
+    >
       <div className="card-top-row">
         <div className="card-meta-left">
           <div className="priority-chip">
@@ -129,32 +147,104 @@ const KanbanColumn = ({ column, onOpenComments }) => {
           <Icon icon="solar:add-circle-linear" className="add-icon" />
         </button>
       </div>
-      <div className="column-cards">
-        {column.cards.map((card) => (
-          <KanbanCard key={card.id} card={card} onOpenComments={onOpenComments} />
-        ))}
-        <button className="add-task-row">
-          <Icon icon="carbon:add" className="plus-sm" />
-          <span>New Task</span>
-        </button>
-      </div>
+      
+      <Droppable droppableId={String(column.id)}>
+        {(provided, snapshot) => (
+          <div 
+            className={`column-cards ${snapshot.isDraggingOver ? 'is-dragging-over' : ''}`}
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            style={{ minHeight: '100px' }}
+          >
+            {column.cards.map((card, index) => (
+              <Draggable key={String(card.id)} draggableId={String(card.id)} index={index}>
+                {(provided, snapshot) => (
+                  <KanbanCard 
+                    card={card} 
+                    onOpenComments={onOpenComments}
+                    provided={provided}
+                    snapshot={snapshot}
+                  />
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+            <button className="add-task-row">
+              <Icon icon="carbon:add" className="plus-sm" />
+              <span>New Task</span>
+            </button>
+          </div>
+        )}
+      </Droppable>
     </div>
   );
 };
 
-const KanbanBoard = ({ columns, onNewTask, onOpenComments }) => {
-  const isEmpty = !columns || columns.every(col => !col.cards || col.cards.length === 0);
+const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => {
+  const [boardData, setBoardData] = useState([]);
+
+  useEffect(() => {
+    setBoardData(initialColumns || []);
+  }, [initialColumns]);
+
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+
+    if (!destination) return;
+
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
+      return;
+    }
+
+    const sourceColIndex = boardData.findIndex(col => String(col.id) === source.droppableId);
+    const destColIndex = boardData.findIndex(col => String(col.id) === destination.droppableId);
+
+    const sourceCol = boardData[sourceColIndex];
+    const destCol = boardData[destColIndex];
+
+    const sourceCards = Array.from(sourceCol.cards || []);
+    const destCards = source.droppableId === destination.droppableId 
+      ? sourceCards 
+      : Array.from(destCol.cards || []);
+
+    const [movedCard] = sourceCards.splice(source.index, 1);
+    destCards.splice(destination.index, 0, movedCard);
+
+    const newBoardData = [...boardData];
+    newBoardData[sourceColIndex] = {
+      ...sourceCol,
+      cards: sourceCards,
+      count: sourceCards.length
+    };
+
+    if (source.droppableId !== destination.droppableId) {
+      newBoardData[destColIndex] = {
+        ...destCol,
+        cards: destCards,
+        count: destCards.length
+      };
+    }
+
+    setBoardData(newBoardData);
+  };
+
+  const isEmpty = !boardData || boardData.every(col => !col.cards || col.cards.length === 0);
 
   if (isEmpty) {
     return <EmptyState onAction={onNewTask} />;
   }
 
   return (
-    <div className="kanban-board">
-      {columns.map((col) => (
-        <KanbanColumn key={col.id} column={col} onOpenComments={onOpenComments} />
-      ))}
-    </div>
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="kanban-board">
+        {boardData.map((col) => (
+          <KanbanColumn key={col.id} column={col} onOpenComments={onOpenComments} />
+        ))}
+      </div>
+    </DragDropContext>
   );
 };
 
