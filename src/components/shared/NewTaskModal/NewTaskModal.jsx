@@ -1,17 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '@iconify/react';
+import { TaskState, TaskPriority, EnumLabels } from '../../../constants/enums';
 import './NewTaskModal.css';
 
 const STATUS_OPTIONS = [
-  { value: 'To Do', bg: '#EAF2FD', color: '#182939', indicator: '#2F80ED' },
-  { value: 'In Progress', bg: '#F19100', color: '#FFFFFF', indicator: '#F19100' },
-  { value: 'Completed', bg: '#08AC16', color: '#FFFFFF', indicator: '#08AC16' },
+  { value: TaskState.Pending, bg: '#EAF2FD', color: '#182939', indicator: '#2F80ED' },
+  { value: TaskState.InProgress, bg: '#F19100', color: '#FFFFFF', indicator: '#F19100' },
+  { value: TaskState.Done, bg: '#08AC16', color: '#FFFFFF', indicator: '#08AC16' },
 ];
 
 const PRIORITY_OPTIONS = [
-  { value: 'High Priority', color: '#ED5757' },
-  { value: 'Mid Priority', color: '#F19100' },
-  { value: 'Low Priority', color: '#08AC16' },
+  { value: TaskPriority.High, color: '#ED5757' },
+  { value: TaskPriority.Medium, color: '#F19100' },
+  { value: TaskPriority.Low, color: '#08AC16' },
 ];
 
 const ENTITY_TYPE_OPTIONS = [
@@ -234,14 +235,14 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity }) => {
 
             <div className="ntm-row three-cols">
               <div className="ntm-select-wrapper" onClick={(e) => { e.stopPropagation(); toggleDropdown('status'); }}>
-                <div className={`ntm-select ${status ? 'has-value' : ''}`}>
+                <div className={`ntm-select ${status !== '' ? 'has-value' : ''}`}>
                   <div className="ntm-status-indicator" style={{ background: getStatusOption()?.indicator || '#D9E2EE' }} />
-                  <span className={status ? 'ntm-select-value' : 'ntm-select-placeholder'}>
-                    {status || 'Status'}
+                  <span className={status !== '' ? 'ntm-select-value' : 'ntm-select-placeholder'}>
+                    {status !== '' ? EnumLabels.TaskState[status] : 'Status'}
                   </span>
                   <Icon icon="solar:alt-arrow-down-linear" className="ntm-chevron" />
                 </div>
-                {status && <label className="ntm-select-label">Status</label>}
+                {status !== '' && <label className="ntm-select-label">Status</label>}
                 {openDropdown === 'status' && (
                   <div className="ntm-dropdown">
                     {STATUS_OPTIONS.map((opt) => (
@@ -251,7 +252,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity }) => {
                         onClick={(e) => { e.stopPropagation(); setStatus(opt.value); setOpenDropdown(null); }}
                       >
                         <div className="ntm-status-indicator small" style={{ background: opt.indicator }} />
-                        <span>{opt.value}</span>
+                        <span>{EnumLabels.TaskState[opt.value]}</span>
                       </button>
                     ))}
                   </div>
@@ -259,13 +260,13 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity }) => {
               </div>
 
               <div className="ntm-select-wrapper" onClick={(e) => { e.stopPropagation(); toggleDropdown('priority'); }}>
-                <div className={`ntm-select ${priority ? 'has-value' : ''}`}>
-                  <span className={priority ? 'ntm-select-value' : 'ntm-select-placeholder'}>
-                    {priority || 'Priority'}
+                <div className={`ntm-select ${priority !== '' ? 'has-value' : ''}`}>
+                  <span className={priority !== '' ? 'ntm-select-value' : 'ntm-select-placeholder'}>
+                    {priority !== '' ? EnumLabels.TaskPriority[priority] : 'Priority'}
                   </span>
                   <Icon icon="solar:alt-arrow-down-linear" className="ntm-chevron" />
                 </div>
-                {priority && <label className="ntm-select-label">Priority</label>}
+                {priority !== '' && <label className="ntm-select-label">Priority</label>}
                 {openDropdown === 'priority' && (
                   <div className="ntm-dropdown">
                     {PRIORITY_OPTIONS.map((opt) => (
@@ -275,7 +276,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity }) => {
                         onClick={(e) => { e.stopPropagation(); setPriority(opt.value); setOpenDropdown(null); }}
                       >
                         <div className="ntm-priority-dot" style={{ background: opt.color }} />
-                        <span>{opt.value}</span>
+                        <span>{EnumLabels.TaskPriority[opt.value]}</span>
                       </button>
                     ))}
                   </div>
