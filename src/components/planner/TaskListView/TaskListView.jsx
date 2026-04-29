@@ -1,4 +1,5 @@
 import { Icon } from '@iconify/react';
+import { EnumLabels } from '../../../constants/enums';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './TaskListView.css';
 
@@ -35,7 +36,7 @@ const TaskRow = ({ task, onOpenComments }) => {
               style={{ background: task.priorityColor }}
             />
           </div>
-          <span className="priority-text">{task.priority}</span>
+          <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority}</span>
         </div>
       </div>
 
@@ -75,7 +76,7 @@ const TaskRow = ({ task, onOpenComments }) => {
             color: task.statusText,
           }}
         >
-          {task.status}
+          {EnumLabels.TaskState[task.status] ?? task.status}
         </div>
       </div>
     </div>

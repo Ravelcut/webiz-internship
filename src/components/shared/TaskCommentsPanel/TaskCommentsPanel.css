@@ -373,3 +373,56 @@
   background: #F5F8FC;
   border-color: #D9E2EE;
 }
+
+.tcp-badge-wrapper {
+  position: relative;
+}
+
+.tcp-badge.clickable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tcp-badge.clickable:hover {
+  background: #F0F2F5;
+}
+
+.tcp-chevron {
+  color: #8B949C;
+  font-size: 14px;
+}
+
+.tcp-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: #FFFFFF;
+  border: 1px solid #EAEBF0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  width: max-content;
+  min-width: 140px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.tcp-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #182939;
+  transition: background 0.2s;
+}
+
+.tcp-dropdown-item:hover {
+  background: #F5F8FC;
+}

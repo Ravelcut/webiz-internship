@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { EnumLabels } from '../../../constants/enums';
 import { Icon } from '@iconify/react';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './KanbanBoard.css';
@@ -68,7 +69,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot }) => {
         <div className="card-meta-left">
           <div className="priority-chip">
             <div className="priority-dot" style={{ background: card.priorityColor }} />
-            <span className="priority-label">{card.priority}</span>
+            <span className="priority-label">{EnumLabels.TaskPriority[card.priority] || card.priority}</span>
           </div>
           <div className="comment-badge-wrapper" onClick={() => onOpenComments && onOpenComments(card)}>
             <Icon icon="solar:chat-round-line-linear" className="comment-icon" />

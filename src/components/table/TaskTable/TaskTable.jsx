@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
+import { EnumLabels } from '../../../constants/enums';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './TaskTable.css';
 
@@ -71,7 +72,7 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
                   className="priority-dot" 
                   style={{ background: task.priorityColor || '#8B949C' }} 
                 />
-                <span className="priority-text">{task.priority || 'No Priority'}</span>
+                <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority ?? 'No Priority'}</span>
               </div>
             </div>
 
@@ -121,7 +122,7 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
                     color: task.statusText || '#182939'
                   }}
                 >
-                  {task.status}
+                  {EnumLabels.TaskState[task.status] ?? task.status}
                 </div>
               </div>
             )}

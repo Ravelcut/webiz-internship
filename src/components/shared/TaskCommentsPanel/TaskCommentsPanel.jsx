@@ -1,11 +1,35 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
+import { TaskState, TaskPriority, EnumLabels } from '../../../constants/enums';
 import './TaskCommentsPanel.css';
+
+const STATUS_OPTIONS = [
+  { value: TaskState.Pending, label: EnumLabels.TaskState[TaskState.Pending], color: '#2F80ED' },
+  { value: TaskState.InProgress, label: EnumLabels.TaskState[TaskState.InProgress], color: '#F19100' },
+  { value: TaskState.PendingReview, label: EnumLabels.TaskState[TaskState.PendingReview], color: '#8B5CF6' },
+  { value: TaskState.InReview, label: EnumLabels.TaskState[TaskState.InReview], color: '#6366F1' },
+  { value: TaskState.Done, label: EnumLabels.TaskState[TaskState.Done], color: '#08AC16' }
+];
+
+const PRIORITY_OPTIONS = [
+  { value: TaskPriority.Lowest, label: EnumLabels.TaskPriority[TaskPriority.Lowest], color: '#8B949C' },
+  { value: TaskPriority.Low, label: EnumLabels.TaskPriority[TaskPriority.Low], color: '#08AC16' },
+  { value: TaskPriority.Medium, label: EnumLabels.TaskPriority[TaskPriority.Medium], color: '#F19100' },
+  { value: TaskPriority.High, label: EnumLabels.TaskPriority[TaskPriority.High], color: '#ED5757' },
+  { value: TaskPriority.Critical, label: EnumLabels.TaskPriority[TaskPriority.Critical], color: '#D3220B' }
+];
 
 const TaskCommentsPanel = ({ task, onClose }) => {
   const [comment, setComment] = useState('');
+  const [openDropdown, setOpenDropdown] = useState(null);
   
+  const [currentStatus, setCurrentStatus] = useState(task?.status || TaskState.Pending);
+  const [currentPriority, setCurrentPriority] = useState(task?.priority || TaskPriority.Medium);
+
   if (!task) return null;
+
+  const statusOpt = STATUS_OPTIONS.find(o => o.value === currentStatus) || STATUS_OPTIONS[0];
+  const priorityOpt = PRIORITY_OPTIONS.find(o => o.value === currentPriority) || PRIORITY_OPTIONS[2];
 
   const mockComments = [
     {
@@ -28,7 +52,7 @@ const TaskCommentsPanel = ({ task, onClose }) => {
 
   return (
     <div className="tcp-backdrop" onClick={onClose}>
-      <div className="tcp-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="tcp-panel" onClick={(e) => { e.stopPropagation(); setOpenDropdown(null); }}>
         <div className="tcp-header">
           <h2 className="tcp-header-title">Task Comments</h2>
           <button className="tcp-close-btn" onClick={onClose}>
@@ -41,18 +65,57 @@ const TaskCommentsPanel = ({ task, onClose }) => {
             <div className="tcp-about-header">
               <span className="tcp-about-label">About Task</span>
               <div className="tcp-badges">
-                {task.status && (
-                  <div className="tcp-badge progress">
-                    <div className="tcp-badge-dot" style={{ background: task.statusColor || '#F19100' }} />
-                    <span>{task.status}</span>
+                
+                <div className="tcp-badge-wrapper">
+                  <div 
+                    className="tcp-badge progress clickable"
+                    onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === 'status' ? null : 'status'); }}
+                  >
+                    <div className="tcp-badge-dot" style={{ background: statusOpt.color }} />
+                    <span>{statusOpt.label}</span>
+                    <Icon icon="solar:alt-arrow-down-linear" className="tcp-chevron" />
                   </div>
-                )}
-                {task.priority && (
-                  <div className="tcp-badge priority">
-                    <div className="tcp-badge-dot" style={{ background: task.priorityColor || '#ED5757' }} />
-                    <span>{task.priority}</span>
+                  {openDropdown === 'status' && (
+                    <div className="tcp-dropdown">
+                      {STATUS_OPTIONS.map(opt => (
+                        <div 
+                          key={opt.value} 
+                          className="tcp-dropdown-item"
+                          onClick={() => { setCurrentStatus(opt.value); setOpenDropdown(null); }}
+                        >
+                          <div className="tcp-badge-dot" style={{ background: opt.color }} />
+                          <span>{opt.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="tcp-badge-wrapper">
+                  <div 
+                    className="tcp-badge priority clickable"
+                    onClick={(e) => { e.stopPropagation(); setOpenDropdown(openDropdown === 'priority' ? null : 'priority'); }}
+                  >
+                    <div className="tcp-badge-dot" style={{ background: priorityOpt.color }} />
+                    <span>{priorityOpt.label}</span>
+                    <Icon icon="solar:alt-arrow-down-linear" className="tcp-chevron" />
                   </div>
-                )}
+                  {openDropdown === 'priority' && (
+                    <div className="tcp-dropdown">
+                      {PRIORITY_OPTIONS.map(opt => (
+                        <div 
+                          key={opt.value} 
+                          className="tcp-dropdown-item"
+                          onClick={() => { setCurrentPriority(opt.value); setOpenDropdown(null); }}
+                        >
+                          <div className="tcp-badge-dot" style={{ background: opt.color }} />
+                          <span>{opt.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
               </div>
             </div>
             <div className="tcp-task-title-box">
