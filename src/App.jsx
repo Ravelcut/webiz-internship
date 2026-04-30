@@ -14,6 +14,7 @@ import CandidateDetail from './components/candidates/CandidateDetail/CandidateDe
 import JobsView from './components/jobs/JobsView';
 import JobDetail from './components/jobs/JobDetail/JobDetail';
 import { tasksData, completedTasks, boardColumns, clientsData, candidatesData } from './data/mockData';
+import { TaskPriority, TaskState } from './constants/enums';
 import { Icon } from '@iconify/react';
 import './index.css';
 
@@ -32,8 +33,69 @@ function App() {
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
 
+  const [boardData, setBoardData] = useState(() => {
+    const saved = localStorage.getItem('taskmanager_board_columns');
+    return saved ? JSON.parse(saved) : boardColumns;
+  });
+
+  const [listData, setListData] = useState(() => {
+    const saved = localStorage.getItem('taskmanager_list_tasks');
+    return saved ? JSON.parse(saved) : tasksData;
+  });
+
+  // Persist to local storage
+  import('react').then(React => {
+    React.useEffect(() => {
+      localStorage.setItem('taskmanager_board_columns', JSON.stringify(boardData));
+    }, [boardData]);
+    React.useEffect(() => {
+      localStorage.setItem('taskmanager_list_tasks', JSON.stringify(listData));
+    }, [listData]);
+  });
+
   const handleCreateTask = (taskData) => {
-    console.log('New task created:', taskData);
+    const priorityColors = {
+      [TaskPriority.Low]: '#08AC16',
+      [TaskPriority.Medium]: '#F19100',
+      [TaskPriority.High]: '#ED5757',
+      [TaskPriority.Critical]: '#D3220B',
+      [TaskPriority.Lowest]: '#2F80ED'
+    };
+
+    const newTask = {
+      id: Date.now().toString(),
+      title: taskData.title,
+      priority: taskData.priority,
+      priorityColor: priorityColors[taskData.priority] || '#F19100',
+      status: taskData.status,
+      comments: 0,
+      assignee: taskData.owner,
+      entity: taskData.entityType,
+      dueDate: taskData.dueDate,
+      overdue: false,
+      completed: taskData.status === TaskState.Done,
+    };
+    
+    // Add to listData
+    setListData([{ ...newTask, group: "Today" }, ...listData]);
+    
+    // Add to boardData
+    const newBoardData = [...boardData];
+    const colIndex = newBoardData.findIndex(col => col.title === taskData.status);
+    if (colIndex !== -1) {
+      newBoardData[colIndex] = {
+        ...newBoardData[colIndex],
+        cards: [newTask, ...newBoardData[colIndex].cards],
+        count: newBoardData[colIndex].count + 1
+      };
+    } else if (newBoardData.length > 0) {
+      newBoardData[0] = {
+        ...newBoardData[0],
+        cards: [newTask, ...newBoardData[0].cards],
+        count: newBoardData[0].count + 1
+      };
+    }
+    setBoardData(newBoardData);
   };
 
   const handleOpenComments = (task) => {
@@ -124,7 +186,7 @@ function App() {
                 {activeTab === 'planner' && (
                   <div className="list-scroll">
                     <TaskListView 
-                      tasks={tasksData} 
+                      tasks={listData} 
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                     />
@@ -134,7 +196,8 @@ function App() {
                 {activeTab === 'board' && (
                   <div className="board-scroll">
                     <KanbanBoard 
-                      columns={boardColumns} 
+                      columns={boardData} 
+                      setColumns={setBoardData}
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                     />
@@ -144,7 +207,7 @@ function App() {
                 {activeTab === 'table' && (
                   <div className="list-scroll">
                     <TaskTable 
-                      tasks={tasksData} 
+                      tasks={listData} 
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                     />

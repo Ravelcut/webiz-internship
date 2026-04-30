@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { EnumLabels } from '../../../constants/enums';
+import { EnumLabels, TaskPriority } from '../../../constants/enums';
 import { Icon } from '@iconify/react';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './KanbanBoard.css';
@@ -12,7 +12,16 @@ const entityIcons = {
   'file-user': 'solar:file-text-linear',
 };
 
-const KanbanCard = ({ card, onOpenComments, provided, snapshot }) => {
+const PRIORITY_OPTIONS = [
+  { value: TaskPriority.High, color: '#ED5757' },
+  { value: TaskPriority.Medium, color: '#F19100' },
+  { value: TaskPriority.Low, color: '#08AC16' },
+  { value: TaskPriority.Critical, color: '#D3220B' },
+  { value: TaskPriority.Lowest, color: '#2F80ED' },
+];
+
+const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority }) => {
+  const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const initials = card.assignee
     ? card.assignee.split(' ').map((n) => n[0]).join('').slice(0, 2)
     : '';
@@ -67,9 +76,34 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot }) => {
     >
       <div className="card-top-row">
         <div className="card-meta-left">
-          <div className="priority-chip">
+          <div className="priority-chip" style={{ position: 'relative', cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); setIsPriorityOpen(!isPriorityOpen); }}>
             <div className="priority-dot" style={{ background: card.priorityColor }} />
             <span className="priority-label">{EnumLabels.TaskPriority[card.priority] || card.priority}</span>
+            <Icon icon="solar:alt-arrow-down-linear" style={{ fontSize: '12px', marginLeft: '4px', color: '#8B949C' }} />
+            {isPriorityOpen && (
+              <div 
+                className="kanban-inline-dropdown"
+                style={{
+                  position: 'absolute', top: '100%', left: 0, background: '#FFFFFF',
+                  border: '1px solid #E6E6E6', borderRadius: '8px', padding: '4px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '120px', marginTop: '4px'
+                }}
+              >
+                {PRIORITY_OPTIONS.map(opt => (
+                  <div key={opt.value} onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPriorityOpen(false);
+                    if (onUpdatePriority) onUpdatePriority(card.id, opt.value, opt.color);
+                  }} style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', 
+                    borderRadius: '4px', fontSize: '12px'
+                  }} onMouseEnter={(e) => e.currentTarget.style.background = '#F5F8FC'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                    <div className="priority-dot" style={{ background: opt.color }} />
+                    <span style={{ color: '#182939' }}>{EnumLabels.TaskPriority[opt.value]}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div className="comment-badge-wrapper" onClick={() => onOpenComments && onOpenComments(card)}>
             <Icon icon="solar:chat-round-line-linear" className="comment-icon" />
@@ -135,7 +169,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot }) => {
   );
 };
 
-const KanbanColumn = ({ column, onOpenComments }) => {
+const KanbanColumn = ({ column, onOpenComments, onUpdatePriority }) => {
   return (
     <div className="kanban-column">
       <div className="column-header">
@@ -163,6 +197,7 @@ const KanbanColumn = ({ column, onOpenComments }) => {
                   <KanbanCard 
                     card={card} 
                     onOpenComments={onOpenComments}
+                    onUpdatePriority={onUpdatePriority}
                     provided={provided}
                     snapshot={snapshot}
                   />
@@ -181,13 +216,7 @@ const KanbanColumn = ({ column, onOpenComments }) => {
   );
 };
 
-const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => {
-  const [boardData, setBoardData] = useState([]);
-
-  useEffect(() => {
-    setBoardData(initialColumns || []);
-  }, [initialColumns]);
-
+const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments }) => {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
@@ -200,11 +229,11 @@ const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => 
       return;
     }
 
-    const sourceColIndex = boardData.findIndex(col => String(col.id) === source.droppableId);
-    const destColIndex = boardData.findIndex(col => String(col.id) === destination.droppableId);
+    const sourceColIndex = columns.findIndex(col => String(col.id) === source.droppableId);
+    const destColIndex = columns.findIndex(col => String(col.id) === destination.droppableId);
 
-    const sourceCol = boardData[sourceColIndex];
-    const destCol = boardData[destColIndex];
+    const sourceCol = columns[sourceColIndex];
+    const destCol = columns[destColIndex];
 
     const sourceCards = Array.from(sourceCol.cards || []);
     const destCards = source.droppableId === destination.droppableId 
@@ -214,7 +243,7 @@ const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => 
     const [movedCard] = sourceCards.splice(source.index, 1);
     destCards.splice(destination.index, 0, movedCard);
 
-    const newBoardData = [...boardData];
+    const newBoardData = [...columns];
     newBoardData[sourceColIndex] = {
       ...sourceCol,
       cards: sourceCards,
@@ -229,10 +258,23 @@ const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => 
       };
     }
 
-    setBoardData(newBoardData);
+    setColumns(newBoardData);
   };
 
-  const isEmpty = !boardData || boardData.every(col => !col.cards || col.cards.length === 0);
+  const handleUpdatePriority = (cardId, newPriority, newColor) => {
+    const newBoardData = columns.map(col => {
+      const updatedCards = col.cards?.map(card => {
+        if (card.id === cardId) {
+          return { ...card, priority: newPriority, priorityColor: newColor };
+        }
+        return card;
+      }) || [];
+      return { ...col, cards: updatedCards };
+    });
+    setColumns(newBoardData);
+  };
+
+  const isEmpty = !columns || columns.every(col => !col.cards || col.cards.length === 0);
 
   if (isEmpty) {
     return <EmptyState onAction={onNewTask} />;
@@ -241,8 +283,13 @@ const KanbanBoard = ({ columns: initialColumns, onNewTask, onOpenComments }) => 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="kanban-board">
-        {boardData.map((col) => (
-          <KanbanColumn key={col.id} column={col} onOpenComments={onOpenComments} />
+        {columns.map((col) => (
+          <KanbanColumn 
+            key={col.id} 
+            column={col} 
+            onOpenComments={onOpenComments} 
+            onUpdatePriority={handleUpdatePriority}
+          />
         ))}
       </div>
     </DragDropContext>
