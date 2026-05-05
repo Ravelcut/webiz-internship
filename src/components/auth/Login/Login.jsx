@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { companyService } from '../../../services/companyService';
 import { employeeService } from '../../../services/employeeService';
 import { recruiterService } from '../../../services/recruiterService';
-import { talentService } from '../../../services/talentService';
+import { authService } from '../../../services/authService';
 import './Login.css';
 
 const Login = ({ onLoginSuccess }) => {
@@ -20,32 +20,34 @@ const Login = ({ onLoginSuccess }) => {
 
     try {
       let response;
-      const payload = { email, password };
-
+      
       // Only attempt real login if email and password are provided
       if (email && password) {
-        switch (role) {
-          case 'company':
-            response = await companyService.authenticate(payload);
-            break;
-          case 'employee':
-            response = await employeeService.authenticate(payload);
-            break;
-          case 'recruiter':
-            response = await recruiterService.authenticate(payload);
-            break;
-          case 'talent':
-            response = await talentService.authenticate(payload);
-            break;
-          default:
-            throw new Error('Invalid role selected');
+        // The backend uses AuthController.Login for Companies
+        if (role === 'company') {
+          response = await authService.login(email, password);
+        } else {
+          // Fallback to services if they exist for other roles
+          const payload = { email, password };
+          switch (role) {
+            case 'employee':
+              response = await employeeService.authenticate(payload);
+              break;
+            case 'recruiter':
+              response = await recruiterService.authenticate(payload);
+              break;
+            case 'talent':
+              response = await talentService.authenticate(payload);
+              break;
+          }
         }
       }
 
-      if (response && response.token) {
-        localStorage.setItem('token', response.token);
+      // Success if we got a response (cookie is handled by axios)
+      if (response && (response.companyId || response.token)) {
         localStorage.setItem('userRole', role);
         localStorage.setItem('userData', JSON.stringify(response));
+        localStorage.setItem('isLoggedIn', 'true');
         onLoginSuccess(response);
       } else {
         // Simulation mode for empty input or backend unavailability
@@ -54,17 +56,17 @@ const Login = ({ onLoginSuccess }) => {
           name: 'Guest ' + role.charAt(0).toUpperCase() + role.slice(1), 
           role 
         };
-        localStorage.setItem('token', 'mock-token');
         localStorage.setItem('userRole', role);
         localStorage.setItem('userData', JSON.stringify(mockResponse));
+        localStorage.setItem('isLoggedIn', 'true');
         onLoginSuccess(mockResponse);
       }
     } catch (err) {
       console.warn('Backend login failed, falling back to simulation mode');
       const mockResponse = { token: 'mock-token', name: 'Demo User', role };
-      localStorage.setItem('token', 'mock-token');
       localStorage.setItem('userRole', role);
       localStorage.setItem('userData', JSON.stringify(mockResponse));
+      localStorage.setItem('isLoggedIn', 'true');
       onLoginSuccess(mockResponse);
     } finally {
       setIsLoading(false);

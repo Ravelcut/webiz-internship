@@ -17,6 +17,7 @@ import { tasksData, completedTasks, boardColumns, clientsData, candidatesData } 
 import { TaskPriority, TaskState } from './constants/enums';
 import { Icon } from '@iconify/react';
 import { companyService } from './services/companyService';
+import { authService } from './services/authService';
 import Login from './components/auth/Login/Login';
 import './index.css';
 
@@ -40,7 +41,7 @@ function App() {
     return saved ? JSON.parse(saved) : boardColumns;
   });
 
-  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'));
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('userData');
     return saved ? JSON.parse(saved) : null;
@@ -153,7 +154,7 @@ function App() {
     }
 
     try {
-      await companyService.updateAssignment(taskId, finalUpdates);
+      await companyService.updateAssignment({ id: taskId, ...finalUpdates });
       setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t));
       
       // Also update board data if status or priority changed
@@ -174,8 +175,13 @@ function App() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.warn('Backend logout failed or already logged out');
+    }
+    localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('userRole');
     localStorage.removeItem('userData');
     setIsLoggedIn(false);
