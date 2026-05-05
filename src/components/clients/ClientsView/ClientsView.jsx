@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import ClientsTable from '../ClientsTable/ClientsTable';
 import ClientsFooter from '../ClientsFooter/ClientsFooter';
-import { clientsData, clientStats } from '../../../data/mockData';
+import { clientStats } from '../../../data/mockData';
+import { companyService } from '../../../services/companyService';
 import './ClientsView.css';
 
 const ClientsView = ({ onNewTask, onSelectCompany }) => {
+  const [companies, setCompanies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const data = await companyService.getCompanies();
+        setCompanies(data);
+      } catch (error) {
+        console.error('Failed to fetch companies:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCompanies();
+  }, []);
+
   return (
     <div className="clients-view">
       <div className="clients-header">
@@ -33,7 +52,11 @@ const ClientsView = ({ onNewTask, onSelectCompany }) => {
       </div>
 
       <div className="clients-content">
-        <ClientsTable clients={clientsData} onNewTask={onNewTask} onSelectCompany={onSelectCompany} />
+        {isLoading ? (
+          <div className="loading-spinner">Loading companies...</div>
+        ) : (
+          <ClientsTable clients={companies} onNewTask={onNewTask} onSelectCompany={onSelectCompany} />
+        )}
       </div>
 
       <ClientsFooter stats={clientStats} />

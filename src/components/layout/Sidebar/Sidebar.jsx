@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import './Sidebar.css';
 
-const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen }) => {
+const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen, onLogout }) => {
   const navIcons = [
     { icon: 'solar:widget-linear', id: 'dashboard' },
     { icon: 'solar:users-group-rounded-linear', id: 'people' },
@@ -43,7 +43,7 @@ const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen }) => {
             <div className="toggle-thumb" />
           </div>
         </div>
-        <button className="sidebar-icon-btn">
+        <button className="sidebar-icon-btn logout-btn" onClick={onLogout}>
           <Icon icon="solar:logout-linear" className="sidebar-icon" />
         </button>
       </div>

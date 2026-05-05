@@ -7,6 +7,16 @@ export const companyService = {
     return data;
   },
 
+  getCompanies: async () => {
+    const { data } = await api.get('/companies');
+    return data;
+  },
+
+  getCompanyDetails: async (id) => {
+    const { data } = await api.get(`/companies/${id}/details`);
+    return data;
+  },
+
   // --- Profile ---
   getProfile: async () => {
     const { data } = await api.get('/companies/profile');
@@ -89,6 +99,11 @@ export const companyService = {
   
   getAssignments: async () => {
     const { data } = await api.get('/companies/assignments');
+    return data;
+  },
+
+  updateAssignmentsRange: async (assignments) => {
+    const { data } = await api.put('/companies/assignments/range', assignments);
     return data;
   }
 };

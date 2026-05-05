@@ -1,10 +1,43 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { EnumLabels } from '../../../constants/enums';
+import { EnumLabels, TaskPriority, TaskState } from '../../../constants/enums';
 import EmptyState from '../../shared/EmptyState/EmptyState';
+import InlineDropdown from '../../shared/InlineDropdown/InlineDropdown';
 import './TaskTable.css';
 
-const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
+const priorityColors = {
+  [TaskPriority.Lowest]: '#2F80ED',
+  [TaskPriority.Low]: '#08AC16',
+  [TaskPriority.Medium]: '#F19100',
+  [TaskPriority.High]: '#ED5757',
+  [TaskPriority.Critical]: '#D3220B',
+};
+
+const statusStyles = {
+  [TaskState.Pending]: { bg: '#EAF2FD', text: '#182939' },
+  [TaskState.InProgress]: { bg: '#F19100', text: '#FFFFFF' },
+  [TaskState.PendingReview]: { bg: '#F5E6FF', text: '#7B2CB5' },
+  [TaskState.InReview]: { bg: '#E0F2FE', text: '#0369A1' },
+  [TaskState.Done]: { bg: '#08AC16', text: '#FFFFFF' },
+};
+
+const priorityOptions = Object.entries(EnumLabels.TaskPriority).map(([value, label]) => ({
+  value: Number(value),
+  label,
+  dot: priorityColors[Number(value)] || '#8B949C',
+}));
+
+const statusOptions = Object.entries(EnumLabels.TaskState).map(([value, label]) => {
+  const style = statusStyles[Number(value)] || { bg: '#EAF2FD', text: '#182939' };
+  return {
+    value: Number(value),
+    label,
+    swatch: style.bg,
+    swatchText: style.text,
+  };
+});
+
+const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) => {
   const isCompleted = variant === 'completed';
 
   const entityIcons = {
@@ -19,6 +52,26 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
   if (!tasks || tasks.length === 0) {
     return <EmptyState onAction={onNewTask} />;
   }
+
+  const handlePriorityChange = (taskId, newPriority) => {
+    if (onUpdateTask) {
+      onUpdateTask(taskId, {
+        priority: newPriority,
+        priorityColor: priorityColors[newPriority] || '#F19100',
+      });
+    }
+  };
+
+  const handleStatusChange = (taskId, newStatus) => {
+    const style = statusStyles[newStatus] || { bg: '#EAF2FD', text: '#182939' };
+    if (onUpdateTask) {
+      onUpdateTask(taskId, {
+        status: newStatus,
+        statusBg: style.bg,
+        statusText: style.text,
+      });
+    }
+  };
 
   return (
     <div className={`task-table-wrapper ${isCompleted ? 'completed-variant' : ''}`}>
@@ -51,8 +104,8 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
       <div className="table-body">
         {tasks.map((task) => (
           <div key={task.id} className={`table-row ${isCompleted ? 'completed-row' : ''}`}>
-            <div className="cell checkbox-cell">
-              <Icon icon="solar:check-circle-linear" className="unchecked-icon" />
+            <div className="cell checkbox-cell" onClick={(e) => { e.stopPropagation(); if (onUpdateTask) onUpdateTask(task.id, { completed: !task.completed }); }}>
+              <Icon icon={task.completed ? "solar:check-circle-bold" : "solar:check-circle-linear"} className={`unchecked-icon ${task.completed ? 'checked' : ''}`} />
             </div>
             
             <div className="cell title-cell">
@@ -67,13 +120,19 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
             </div>
             
             <div className="cell priority-cell">
-              <div className="priority-chip">
-                <div 
-                  className="priority-dot" 
-                  style={{ background: task.priorityColor || '#8B949C' }} 
-                />
-                <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority ?? 'No Priority'}</span>
-              </div>
+              <InlineDropdown
+                options={priorityOptions}
+                value={task.priority}
+                onChange={(val) => handlePriorityChange(task.id, val)}
+              >
+                <div className="priority-chip">
+                  <div 
+                    className="priority-dot" 
+                    style={{ background: task.priorityColor || '#8B949C' }} 
+                  />
+                  <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority ?? 'No Priority'}</span>
+                </div>
+              </InlineDropdown>
             </div>
 
             {isCompleted && (
@@ -115,15 +174,21 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments }) => {
 
             {!isCompleted && (
               <div className="cell status-cell">
-                <div 
-                  className="status-badge"
-                  style={{ 
-                    background: task.statusBg || '#EAF2FD',
-                    color: task.statusText || '#182939'
-                  }}
+                <InlineDropdown
+                  options={statusOptions}
+                  value={task.status}
+                  onChange={(val) => handleStatusChange(task.id, val)}
                 >
-                  {EnumLabels.TaskState[task.status] ?? task.status}
-                </div>
+                  <div 
+                    className="status-badge"
+                    style={{ 
+                      background: task.statusBg || '#EAF2FD',
+                      color: task.statusText || '#182939'
+                    }}
+                  >
+                    {EnumLabels.TaskState[task.status] ?? task.status}
+                  </div>
+                </InlineDropdown>
               </div>
             )}
             

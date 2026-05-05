@@ -1,14 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import CompanyInfoCard from './widgets/CompanyInfoCard';
 import TeamSidebar from './widgets/TeamSidebar';
 import InterviewSchedule from './widgets/InterviewSchedule';
 import JobsManagement from './widgets/JobsManagement';
 import ActionsTable from './widgets/ActionsTable';
+import { companyService } from '../../../services/companyService';
 import './CompanyDetail.css';
 
 const CompanyDetail = ({ company, onBack, onNewTask }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [details, setDetails] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const data = await companyService.getCompanyDetails(company.id);
+        setDetails(data);
+      } catch (error) {
+        console.error('Failed to fetch company details:', error);
+        // Fallback to basic company data if details fail
+        setDetails(company);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (company?.id) {
+      fetchDetails();
+    }
+  }, [company]);
 
   const tabs = [
     { id: 'overview', label: 'Overview' },
@@ -20,6 +42,8 @@ const CompanyDetail = ({ company, onBack, onNewTask }) => {
     { id: 'daysoff', label: 'Days off' },
     { id: 'jobs', label: 'Jobs' },
   ];
+
+  if (isLoading) return <div className="company-detail loading">Loading details...</div>;
 
   return (
     <div className="company-detail">
@@ -66,8 +90,8 @@ const CompanyDetail = ({ company, onBack, onNewTask }) => {
       <main className="company-dashboard-content">
         <div className="dashboard-grid">
           <div className="grid-top">
-            <CompanyInfoCard company={company} onNewTask={onNewTask} />
-            <TeamSidebar />
+            <CompanyInfoCard company={details || company} onNewTask={onNewTask} />
+            <TeamSidebar team={details?.employees || []} />
           </div>
           
           <div className="grid-middle">

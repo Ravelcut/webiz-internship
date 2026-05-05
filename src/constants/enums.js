@@ -50,7 +50,7 @@ export const EnumLabels = Object.freeze({
   TaskPriority: {
     [TaskPriority.Lowest]: 'Lowest',
     [TaskPriority.Low]: 'Low Priority',
-    [TaskPriority.Medium]: 'Medium Priority',
+    [TaskPriority.Medium]: 'Mid Priority',
     [TaskPriority.High]: 'High Priority',
     [TaskPriority.Critical]: 'Critical Priority'
   }

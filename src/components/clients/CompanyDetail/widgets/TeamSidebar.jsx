@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import './TeamSidebar.css';
 
-const TeamSidebar = () => {
+const TeamSidebar = ({ team = [] }) => {
   const [activeTab, setActiveTab] = useState('representatives');
 
-  const employees = [
+  // Use team from props if available, otherwise fallback to basic mock for visualization
+  const displayEmployees = team.length > 0 ? team : [
     { id: 1, name: 'Luffy D.', role: 'Lead', isLead: true, avatar: 'https://i.pravatar.cc/150?u=1' },
     { id: 2, name: 'Mike D.', role: 'AM', avatar: 'https://i.pravatar.cc/150?u=2' },
-    { id: 3, name: 'All (32)', isSummary: true }
+    { id: 3, name: `All (${team.length || 32})`, isSummary: true }
   ];
 
   return (
@@ -29,7 +30,7 @@ const TeamSidebar = () => {
       </div>
 
       <div className="team-list">
-        {employees.map(emp => (
+        {displayEmployees.map(emp => (
           <div key={emp.id} className="team-member-item">
             <div className="member-avatar-box">
               {emp.isLead && <Icon icon="solar:crown-minimalistic-bold" className="lead-crown" />}

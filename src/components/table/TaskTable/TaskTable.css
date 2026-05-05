@@ -90,6 +90,11 @@
   color: #DDE2E8;
   font-size: 20px;
   cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.unchecked-icon.checked {
+  color: #08AC16;
 }
 
 .title-cell {

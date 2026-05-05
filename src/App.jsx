@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Sidebar from './components/layout/Sidebar/Sidebar';
 import TopHeader from './components/layout/TopHeader/TopHeader';
 import ContentHeader from './components/layout/ContentHeader/ContentHeader';
@@ -16,6 +16,8 @@ import JobDetail from './components/jobs/JobDetail/JobDetail';
 import { tasksData, completedTasks, boardColumns, clientsData, candidatesData } from './data/mockData';
 import { TaskPriority, TaskState } from './constants/enums';
 import { Icon } from '@iconify/react';
+import { companyService } from './services/companyService';
+import Login from './components/auth/Login/Login';
 import './index.css';
 
 import TaskCommentsPanel from './components/shared/TaskCommentsPanel/TaskCommentsPanel';
@@ -38,22 +40,57 @@ function App() {
     return saved ? JSON.parse(saved) : boardColumns;
   });
 
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem('token'));
+  const [currentUser, setCurrentUser] = useState(() => {
+    const saved = localStorage.getItem('userData');
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const [listData, setListData] = useState(() => {
     const saved = localStorage.getItem('taskmanager_list_tasks');
     return saved ? JSON.parse(saved) : tasksData;
   });
 
   // Persist to local storage
-  import('react').then(React => {
-    React.useEffect(() => {
-      localStorage.setItem('taskmanager_board_columns', JSON.stringify(boardData));
-    }, [boardData]);
-    React.useEffect(() => {
-      localStorage.setItem('taskmanager_list_tasks', JSON.stringify(listData));
-    }, [listData]);
-  });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateTask = (taskData) => {
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      setIsLoading(true);
+      try {
+        const assignments = await companyService.getAssignments();
+        setListData(assignments);
+        
+        // Update board data based on fetched assignments
+        const newBoardData = boardColumns.map(col => {
+          const colTasks = assignments.filter(t => t.status === col.title);
+          return {
+            ...col,
+            cards: colTasks,
+            count: colTasks.length
+          };
+        });
+        setBoardData(newBoardData);
+      } catch (error) {
+        console.error('Failed to fetch assignments:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, []);
+
+  // Persist to local storage
+  useEffect(() => {
+    localStorage.setItem('taskmanager_board_columns', JSON.stringify(boardData));
+  }, [boardData]);
+
+  useEffect(() => {
+    localStorage.setItem('taskmanager_list_tasks', JSON.stringify(listData));
+  }, [listData]);
+
+  const handleCreateTask = async (taskData) => {
     const priorityColors = {
       [TaskPriority.Low]: '#08AC16',
       [TaskPriority.Medium]: '#F19100',
@@ -62,46 +99,87 @@ function App() {
       [TaskPriority.Lowest]: '#2F80ED'
     };
 
-    const newTask = {
-      id: Date.now().toString(),
-      title: taskData.title,
-      priority: taskData.priority,
-      priorityColor: priorityColors[taskData.priority] || '#F19100',
-      status: taskData.status,
-      comments: 0,
-      assignee: taskData.owner,
-      entity: taskData.entityType,
-      dueDate: taskData.dueDate,
-      overdue: false,
-      completed: taskData.status === TaskState.Done,
-    };
-    
-    // Add to listData
-    setListData([{ ...newTask, group: "Today" }, ...listData]);
-    
-    // Add to boardData
-    const newBoardData = [...boardData];
-    const colIndex = newBoardData.findIndex(col => col.title === taskData.status);
-    if (colIndex !== -1) {
-      newBoardData[colIndex] = {
-        ...newBoardData[colIndex],
-        cards: [newTask, ...newBoardData[colIndex].cards],
-        count: newBoardData[colIndex].count + 1
+    try {
+      const createdTask = await companyService.createAssignment({
+        title: taskData.title,
+        priority: taskData.priority,
+        status: taskData.status,
+        assignee: taskData.owner,
+        entity: taskData.entityType,
+        dueDate: taskData.dueDate
+      });
+
+      const newTask = {
+        ...createdTask,
+        priorityColor: priorityColors[createdTask.priority] || '#F19100',
+        completed: createdTask.status === TaskState.Done,
       };
-    } else if (newBoardData.length > 0) {
-      newBoardData[0] = {
-        ...newBoardData[0],
-        cards: [newTask, ...newBoardData[0].cards],
-        count: newBoardData[0].count + 1
-      };
+      
+      // Add to listData
+      setListData([{ ...newTask, group: "Today" }, ...listData]);
+      
+      // Add to boardData
+      const newBoardData = [...boardData];
+      const colIndex = newBoardData.findIndex(col => col.title === taskData.status);
+      if (colIndex !== -1) {
+        newBoardData[colIndex] = {
+          ...newBoardData[colIndex],
+          cards: [newTask, ...newBoardData[colIndex].cards],
+          count: (newBoardData[colIndex].cards?.length || 0) + 1
+        };
+      }
+      setBoardData(newBoardData);
+      setIsNewTaskOpen(false);
+    } catch (error) {
+      console.error('Failed to create task:', error);
     }
-    setBoardData(newBoardData);
+  };
+
+  const handleUpdateTask = async (taskId, updates) => {
+    try {
+      await companyService.updateAssignment(taskId, updates);
+      setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+      
+      // Also update board data if status or priority changed
+      if (updates.status !== undefined || updates.priority !== undefined) {
+        // Refresh everything to keep it simple, or update specifically
+        const updatedListData = listData.map(t => t.id === taskId ? { ...t, ...updates } : t);
+        const newBoardData = boardData.map(col => {
+          const colTasks = updatedListData.filter(t => t.status === col.title);
+          return {
+            ...col,
+            cards: colTasks,
+            count: colTasks.length
+          };
+        });
+        setBoardData(newBoardData);
+      }
+    } catch (error) {
+      console.error('Failed to update task:', error);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userData');
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+  };
+
+  const handleLoginSuccess = (user) => {
+    setCurrentUser(user);
+    setIsLoggedIn(true);
   };
 
   const handleOpenComments = (task) => {
     setSelectedTaskForComments(task);
     setIsCommentsOpen(true);
   };
+
+  if (!isLoggedIn) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="app-shell">
@@ -110,6 +188,7 @@ function App() {
         setIsOpen={setIsSidebarOpen} 
         activeModule={activeModule}
         onModuleChange={setActiveModule}
+        onLogout={handleLogout}
       />
       
       <div className="main-area">
@@ -189,6 +268,7 @@ function App() {
                       tasks={listData} 
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
+                      onUpdateTask={handleUpdateTask}
                     />
                   </div>
                 )}
@@ -200,6 +280,7 @@ function App() {
                       setColumns={setBoardData}
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
+                      onUpdateTask={handleUpdateTask}
                     />
                   </div>
                 )}
@@ -210,6 +291,7 @@ function App() {
                       tasks={listData} 
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
+                      onUpdateTask={handleUpdateTask}
                     />
                   </div>
                 )}
@@ -244,6 +326,7 @@ function App() {
         <TaskCommentsPanel 
           task={selectedTaskForComments} 
           onClose={() => setIsCommentsOpen(false)} 
+          onUpdateTask={handleUpdateTask}
         />
       )}
     </div>

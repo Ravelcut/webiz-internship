@@ -216,7 +216,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority }) => {
   );
 };
 
-const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments }) => {
+const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateTask }) => {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
@@ -256,6 +256,12 @@ const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments }) => {
         cards: destCards,
         count: destCards.length
       };
+
+      // Call API to update status
+      const newStatus = destCol.title;
+      if (onUpdateTask) {
+        onUpdateTask(movedCard.id, { status: newStatus });
+      }
     }
 
     setColumns(newBoardData);

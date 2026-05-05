@@ -48,13 +48,19 @@
 
 .cell-checkbox {
   justify-content: center;
-  width: 40px;
-  padding: 6px 16px;
+  width: 48px;
+  padding: 0;
 }
 
-.checkbox-icon {
-  font-size: 16px;
-  color: var(--icon-gray-75);
+.unchecked-icon {
+  color: #DDE2E8;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.unchecked-icon.checked {
+  color: #08AC16;
 }
 
 .cell-name {

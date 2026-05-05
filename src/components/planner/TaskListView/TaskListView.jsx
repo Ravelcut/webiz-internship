@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
-import { EnumLabels } from '../../../constants/enums';
+import { EnumLabels, TaskPriority, TaskState } from '../../../constants/enums';
 import EmptyState from '../../shared/EmptyState/EmptyState';
+import InlineDropdown from '../../shared/InlineDropdown/InlineDropdown';
 import './TaskListView.css';
 
 const entityIcons = {
@@ -10,11 +11,59 @@ const entityIcons = {
   'file-user': 'solar:file-text-linear',
 };
 
-const TaskRow = ({ task, onOpenComments }) => {
+const priorityColors = {
+  [TaskPriority.Lowest]: '#2F80ED',
+  [TaskPriority.Low]: '#08AC16',
+  [TaskPriority.Medium]: '#F19100',
+  [TaskPriority.High]: '#ED5757',
+  [TaskPriority.Critical]: '#D3220B',
+};
+
+const statusStyles = {
+  [TaskState.Pending]: { bg: '#EAF2FD', text: '#182939' },
+  [TaskState.InProgress]: { bg: '#F19100', text: '#FFFFFF' },
+  [TaskState.PendingReview]: { bg: '#F5E6FF', text: '#7B2CB5' },
+  [TaskState.InReview]: { bg: '#E0F2FE', text: '#0369A1' },
+  [TaskState.Done]: { bg: '#08AC16', text: '#FFFFFF' },
+};
+
+const priorityOptions = Object.entries(EnumLabels.TaskPriority).map(([value, label]) => ({
+  value: Number(value),
+  label,
+  dot: priorityColors[Number(value)] || '#8B949C',
+}));
+
+const statusOptions = Object.entries(EnumLabels.TaskState).map(([value, label]) => {
+  const style = statusStyles[Number(value)] || { bg: '#EAF2FD', text: '#182939' };
+  return {
+    value: Number(value),
+    label,
+    swatch: style.bg,
+    swatchText: style.text,
+  };
+});
+
+const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
+  const handlePriorityChange = (newPriority) => {
+    onUpdateTask(task.id, {
+      priority: newPriority,
+      priorityColor: priorityColors[newPriority] || '#F19100',
+    });
+  };
+
+  const handleStatusChange = (newStatus) => {
+    const style = statusStyles[newStatus] || { bg: '#EAF2FD', text: '#182939' };
+    onUpdateTask(task.id, {
+      status: newStatus,
+      statusBg: style.bg,
+      statusText: style.text,
+    });
+  };
+
   return (
     <div className="task-row">
-      <div className="cell cell-checkbox">
-        <Icon icon="solar:check-circle-linear" className="checkbox-icon" />
+      <div className="cell cell-checkbox" onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, { completed: !task.completed }); }}>
+        <Icon icon={task.completed ? "solar:check-circle-bold" : "solar:check-circle-linear"} className={`unchecked-icon ${task.completed ? 'checked' : ''}`} />
       </div>
 
       <div className="cell cell-name">
@@ -29,15 +78,21 @@ const TaskRow = ({ task, onOpenComments }) => {
       </div>
 
       <div className="cell cell-priority">
-        <div className="priority-pill">
-          <div className="priority-dot-wrapper">
-            <div
-              className="priority-dot"
-              style={{ background: task.priorityColor }}
-            />
+        <InlineDropdown
+          options={priorityOptions}
+          value={task.priority}
+          onChange={handlePriorityChange}
+        >
+          <div className="priority-pill">
+            <div className="priority-dot-wrapper">
+              <div
+                className="priority-dot"
+                style={{ background: task.priorityColor }}
+              />
+            </div>
+            <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority}</span>
           </div>
-          <span className="priority-text">{EnumLabels.TaskPriority[task.priority] ?? task.priority}</span>
-        </div>
+        </InlineDropdown>
       </div>
 
       <div className="cell cell-assignee">
@@ -69,21 +124,27 @@ const TaskRow = ({ task, onOpenComments }) => {
       </div>
 
       <div className="cell cell-status">
-        <div
-          className="status-badge"
-          style={{
-            background: task.statusBg,
-            color: task.statusText,
-          }}
+        <InlineDropdown
+          options={statusOptions}
+          value={task.status}
+          onChange={handleStatusChange}
         >
-          {EnumLabels.TaskState[task.status] ?? task.status}
-        </div>
+          <div
+            className="status-badge"
+            style={{
+              background: task.statusBg,
+              color: task.statusText,
+            }}
+          >
+            {EnumLabels.TaskState[task.status] ?? task.status}
+          </div>
+        </InlineDropdown>
       </div>
     </div>
   );
 };
 
-const TaskListView = ({ tasks, onNewTask, onOpenComments }) => {
+const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask }) => {
   if (!tasks || tasks.length === 0) {
     return <EmptyState onAction={onNewTask} />;
   }
@@ -103,7 +164,12 @@ const TaskListView = ({ tasks, onNewTask, onOpenComments }) => {
             </div>
             <div className="group-rows">
               {groupTasks.map((task) => (
-                <TaskRow key={task.id} task={task} onOpenComments={onOpenComments} />
+                <TaskRow
+                  key={task.id}
+                  task={task}
+                  onOpenComments={onOpenComments}
+                  onUpdateTask={onUpdateTask}
+                />
               ))}
             </div>
           </div>

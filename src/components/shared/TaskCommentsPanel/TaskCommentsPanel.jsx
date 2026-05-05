@@ -19,7 +19,7 @@ const PRIORITY_OPTIONS = [
   { value: TaskPriority.Critical, label: EnumLabels.TaskPriority[TaskPriority.Critical], color: '#D3220B' }
 ];
 
-const TaskCommentsPanel = ({ task, onClose }) => {
+const TaskCommentsPanel = ({ task, onClose, onUpdateTask }) => {
   const [comment, setComment] = useState('');
   const [openDropdown, setOpenDropdown] = useState(null);
   
@@ -81,7 +81,11 @@ const TaskCommentsPanel = ({ task, onClose }) => {
                         <div 
                           key={opt.value} 
                           className="tcp-dropdown-item"
-                          onClick={() => { setCurrentStatus(opt.value); setOpenDropdown(null); }}
+                          onClick={() => { 
+                            setCurrentStatus(opt.value); 
+                            setOpenDropdown(null);
+                            if (onUpdateTask) onUpdateTask(task.id, { status: opt.value });
+                          }}
                         >
                           <div className="tcp-badge-dot" style={{ background: opt.color }} />
                           <span>{opt.label}</span>
@@ -106,7 +110,11 @@ const TaskCommentsPanel = ({ task, onClose }) => {
                         <div 
                           key={opt.value} 
                           className="tcp-dropdown-item"
-                          onClick={() => { setCurrentPriority(opt.value); setOpenDropdown(null); }}
+                          onClick={() => { 
+                            setCurrentPriority(opt.value); 
+                            setOpenDropdown(null);
+                            if (onUpdateTask) onUpdateTask(task.id, { priority: opt.value });
+                          }}
                         >
                           <div className="tcp-badge-dot" style={{ background: opt.color }} />
                           <span>{opt.label}</span>
