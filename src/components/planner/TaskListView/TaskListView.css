@@ -31,14 +31,14 @@
   gap: 1px;
 }
 
-.task-row {
+.task-list-view .task-row {
   display: flex;
   align-items: center;
   height: 56px;
   background: var(--white);
 }
 
-.cell {
+.task-list-view .cell {
   display: flex;
   align-items: center;
   height: 56px;
@@ -46,10 +46,12 @@
   box-shadow: 0px 1px 0px var(--stroke-gray);
 }
 
-.cell-checkbox {
+.task-list-view .cell-checkbox {
   justify-content: center;
   width: 48px;
+  min-width: 48px;
   padding: 0;
+  overflow: visible;
 }
 
 .task-list-view .unchecked-icon {
@@ -263,15 +265,15 @@
   white-space: nowrap;
 }
 
-.task-row:hover {
+.task-list-view .task-row:hover {
   background: #FAFBFE;
 }
 
-.task-row:hover .cell {
+.task-list-view .task-row:hover .cell {
   background: #FAFBFE;
 }
 
-.task-row {
+.task-list-view .task-row {
   cursor: pointer;
   transition: background 0.15s ease;
 }

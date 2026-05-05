@@ -73,7 +73,7 @@
   background: #fbfbfc;
 }
 
-.cell {
+.task-table-wrapper .cell {
   display: flex;
   align-items: center;
   height: 100%;
@@ -83,7 +83,7 @@
   box-sizing: border-box;
 }
 
-.checkbox-cell {
+.task-table-wrapper .checkbox-cell {
   justify-content: center;
   padding: 0;
 }
