@@ -153,25 +153,21 @@ function App() {
       finalUpdates.completed = updates.status === TaskState.Done;
     }
 
+    // Optimistic update — always update local state immediately
+    setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t));
+
+    if (finalUpdates.status !== undefined || finalUpdates.priority !== undefined) {
+      setBoardData(prev => prev.map(col => {
+        const updatedCards = col.cards?.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t) || [];
+        return { ...col, cards: updatedCards, count: updatedCards.length };
+      }));
+    }
+
+    // Fire API call in background (don't block UI)
     try {
       await companyService.updateAssignment({ id: taskId, ...finalUpdates });
-      setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t));
-      
-      // Also update board data if status or priority changed
-      if (finalUpdates.status !== undefined || finalUpdates.priority !== undefined) {
-        const updatedListData = listData.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t);
-        const newBoardData = boardData.map(col => {
-          const colTasks = updatedListData.filter(t => t.status === col.title);
-          return {
-            ...col,
-            cards: colTasks,
-            count: colTasks.length
-          };
-        });
-        setBoardData(newBoardData);
-      }
     } catch (error) {
-      console.error('Failed to update task:', error);
+      console.warn('Backend update failed (offline mode):', error.message);
     }
   };
 
