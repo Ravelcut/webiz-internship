@@ -62,7 +62,14 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
 
   return (
     <div className="task-row">
-      <div className="cell cell-checkbox" onClick={(e) => { e.stopPropagation(); onUpdateTask(task.id, { completed: !task.completed }); }}>
+      <div className="cell cell-checkbox" onClick={(e) => { 
+        e.stopPropagation(); 
+        const isNowCompleted = !task.completed;
+        onUpdateTask(task.id, { 
+          completed: isNowCompleted,
+          status: isNowCompleted ? TaskState.Done : TaskState.Pending 
+        }); 
+      }}>
         <Icon icon={task.completed ? "solar:check-circle-bold" : "solar:check-circle-linear"} className={`unchecked-icon ${task.completed ? 'checked' : ''}`} />
       </div>
 

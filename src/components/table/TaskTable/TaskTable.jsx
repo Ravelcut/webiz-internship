@@ -104,7 +104,16 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) 
       <div className="table-body">
         {tasks.map((task) => (
           <div key={task.id} className={`table-row ${isCompleted ? 'completed-row' : ''}`}>
-            <div className="cell checkbox-cell" onClick={(e) => { e.stopPropagation(); if (onUpdateTask) onUpdateTask(task.id, { completed: !task.completed }); }}>
+            <div className="cell checkbox-cell" onClick={(e) => { 
+              e.stopPropagation(); 
+              if (onUpdateTask) {
+                const isNowCompleted = !task.completed;
+                onUpdateTask(task.id, { 
+                  completed: isNowCompleted,
+                  status: isNowCompleted ? TaskState.Done : TaskState.Pending 
+                });
+              }
+            }}>
               <Icon icon={task.completed ? "solar:check-circle-bold" : "solar:check-circle-linear"} className={`unchecked-icon ${task.completed ? 'checked' : ''}`} />
             </div>
             

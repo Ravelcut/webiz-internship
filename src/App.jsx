@@ -136,14 +136,29 @@ function App() {
   };
 
   const handleUpdateTask = async (taskId, updates) => {
+    const statusStyles = {
+      [TaskState.Pending]: { bg: '#EAF2FD', text: '#182939' },
+      [TaskState.InProgress]: { bg: '#F19100', text: '#FFFFFF' },
+      [TaskState.PendingReview]: { bg: '#F5E6FF', text: '#7B2CB5' },
+      [TaskState.InReview]: { bg: '#E0F2FE', text: '#0369A1' },
+      [TaskState.Done]: { bg: '#08AC16', text: '#FFFFFF' },
+    };
+
+    const finalUpdates = { ...updates };
+    if (updates.status !== undefined) {
+      const style = statusStyles[updates.status] || statusStyles[TaskState.Pending];
+      finalUpdates.statusBg = style.bg;
+      finalUpdates.statusText = style.text;
+      finalUpdates.completed = updates.status === TaskState.Done;
+    }
+
     try {
-      await companyService.updateAssignment(taskId, updates);
-      setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...updates } : t));
+      await companyService.updateAssignment(taskId, finalUpdates);
+      setListData(prev => prev.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t));
       
       // Also update board data if status or priority changed
-      if (updates.status !== undefined || updates.priority !== undefined) {
-        // Refresh everything to keep it simple, or update specifically
-        const updatedListData = listData.map(t => t.id === taskId ? { ...t, ...updates } : t);
+      if (finalUpdates.status !== undefined || finalUpdates.priority !== undefined) {
+        const updatedListData = listData.map(t => t.id === taskId ? { ...t, ...finalUpdates } : t);
         const newBoardData = boardData.map(col => {
           const colTasks = updatedListData.filter(t => t.status === col.title);
           return {
