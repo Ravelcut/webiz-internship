@@ -22,21 +22,24 @@ const Login = ({ onLoginSuccess }) => {
       let response;
       const payload = { email, password };
 
-      switch (role) {
-        case 'company':
-          response = await companyService.authenticate(payload);
-          break;
-        case 'employee':
-          response = await employeeService.authenticate(payload);
-          break;
-        case 'recruiter':
-          response = await recruiterService.authenticate(payload);
-          break;
-        case 'talent':
-          response = await talentService.authenticate(payload);
-          break;
-        default:
-          throw new Error('Invalid role selected');
+      // Only attempt real login if email and password are provided
+      if (email && password) {
+        switch (role) {
+          case 'company':
+            response = await companyService.authenticate(payload);
+            break;
+          case 'employee':
+            response = await employeeService.authenticate(payload);
+            break;
+          case 'recruiter':
+            response = await recruiterService.authenticate(payload);
+            break;
+          case 'talent':
+            response = await talentService.authenticate(payload);
+            break;
+          default:
+            throw new Error('Invalid role selected');
+        }
       }
 
       if (response && response.token) {
@@ -45,16 +48,24 @@ const Login = ({ onLoginSuccess }) => {
         localStorage.setItem('userData', JSON.stringify(response));
         onLoginSuccess(response);
       } else {
-        // Fallback for development if no backend is running
-        console.warn('No token received, simulation mode');
-        const mockResponse = { token: 'mock-token', name: 'Demo User', role };
+        // Simulation mode for empty input or backend unavailability
+        const mockResponse = { 
+          token: 'mock-token', 
+          name: 'Guest ' + role.charAt(0).toUpperCase() + role.slice(1), 
+          role 
+        };
         localStorage.setItem('token', 'mock-token');
         localStorage.setItem('userRole', role);
+        localStorage.setItem('userData', JSON.stringify(mockResponse));
         onLoginSuccess(mockResponse);
       }
     } catch (err) {
-      console.error('Login error:', err);
-      setError('Invalid email or password. Please try again.');
+      console.warn('Backend login failed, falling back to simulation mode');
+      const mockResponse = { token: 'mock-token', name: 'Demo User', role };
+      localStorage.setItem('token', 'mock-token');
+      localStorage.setItem('userRole', role);
+      localStorage.setItem('userData', JSON.stringify(mockResponse));
+      onLoginSuccess(mockResponse);
     } finally {
       setIsLoading(false);
     }
@@ -116,7 +127,6 @@ const Login = ({ onLoginSuccess }) => {
                 placeholder="name@company.com" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </div>
           </div>
@@ -131,7 +141,6 @@ const Login = ({ onLoginSuccess }) => {
                 placeholder="••••••••" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
               />
             </div>
           </div>
