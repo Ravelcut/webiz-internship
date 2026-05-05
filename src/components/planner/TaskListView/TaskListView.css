@@ -52,14 +52,16 @@
   padding: 0;
 }
 
-.unchecked-icon {
+.task-list-view .unchecked-icon {
   color: #DDE2E8;
   font-size: 24px;
+  width: 24px;
+  height: 24px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.unchecked-icon.checked {
+.task-list-view .unchecked-icon.checked {
   color: #08AC16;
 }
 
