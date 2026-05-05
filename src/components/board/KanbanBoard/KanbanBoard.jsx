@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { EnumLabels, TaskPriority } from '../../../constants/enums';
+import { EnumLabels, TaskPriority, TaskState } from '../../../constants/enums';
 import { Icon } from '@iconify/react';
 import EmptyState from '../../shared/EmptyState/EmptyState';
 import './KanbanBoard.css';
@@ -20,7 +20,7 @@ const PRIORITY_OPTIONS = [
   { value: TaskPriority.Lowest, color: '#2F80ED' },
 ];
 
-const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority }) => {
+const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority, onUpdateTask }) => {
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const initials = card.assignee
     ? card.assignee.split(' ').map((n) => n[0]).join('').slice(0, 2)
@@ -111,7 +111,16 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
           </div>
         </div>
         <div className="card-meta-right">
-          <div className="check-btn">
+          <div className="check-btn" onClick={(e) => {
+            e.stopPropagation();
+            if (onUpdateTask) {
+              const isNowCompleted = !card.completed;
+              onUpdateTask(card.id, {
+                completed: isNowCompleted,
+                status: isNowCompleted ? TaskState.Done : TaskState.Pending
+              });
+            }
+          }}>
             {card.completed ? (
               <Icon icon="solar:check-circle-bold" className="check-icon--green" />
             ) : (
@@ -169,7 +178,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
   );
 };
 
-const KanbanColumn = ({ column, onOpenComments, onUpdatePriority }) => {
+const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask }) => {
   return (
     <div className="kanban-column">
       <div className="column-header">
@@ -198,6 +207,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority }) => {
                     card={card} 
                     onOpenComments={onOpenComments}
                     onUpdatePriority={onUpdatePriority}
+                    onUpdateTask={onUpdateTask}
                     provided={provided}
                     snapshot={snapshot}
                   />
@@ -295,6 +305,7 @@ const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateT
             column={col} 
             onOpenComments={onOpenComments} 
             onUpdatePriority={handleUpdatePriority}
+            onUpdateTask={onUpdateTask}
           />
         ))}
       </div>
