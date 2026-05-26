@@ -1,15 +1,11 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { companyService } from '../../../services/companyService';
-import { employeeService } from '../../../services/employeeService';
-import { recruiterService } from '../../../services/recruiterService';
-import { talentService } from '../../../services/talentService';
 import { authService } from '../../../services/authService';
 import './Login.css';
 
 const Login = ({ onLoginSuccess }) => {
-  const [role, setRole] = useState('company'); // 'company', 'employee', 'recruiter', 'talent'
+  const [role, setRole] = useState('company'); // 'company' or 'talent'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -36,23 +32,12 @@ const Login = ({ onLoginSuccess }) => {
       // 2. Authenticate against the backend API
       if (role === 'company') {
         response = await authService.login(cleanEmail, cleanPassword);
-      } else {
-        const payload = { email: cleanEmail, password: cleanPassword };
-        switch (role) {
-          case 'employee':
-            response = await employeeService.authenticate(payload);
-            break;
-          case 'recruiter':
-            response = await recruiterService.authenticate(payload);
-            break;
-          case 'talent':
-            response = await talentService.authenticate(payload);
-            break;
-        }
+      } else if (role === 'talent') {
+        response = await authService.loginTalent(cleanEmail, cleanPassword);
       }
 
       // 3. Save session and trigger login success
-      if (response && (response.companyId || response.token)) {
+      if (response && (response.companyId || response.talentId || response.token)) {
         localStorage.setItem('userRole', role);
         localStorage.setItem('userData', JSON.stringify(response));
         localStorage.setItem('isLoggedIn', 'true');
@@ -98,18 +83,6 @@ const Login = ({ onLoginSuccess }) => {
             onClick={() => setRole('company')}
           >
             Company
-          </button>
-          <button 
-            className={`role-btn ${role === 'employee' ? 'active' : ''}`}
-            onClick={() => setRole('employee')}
-          >
-            Employee
-          </button>
-          <button 
-            className={`role-btn ${role === 'recruiter' ? 'active' : ''}`}
-            onClick={() => setRole('recruiter')}
-          >
-            Recruiter
           </button>
           <button 
             className={`role-btn ${role === 'talent' ? 'active' : ''}`}

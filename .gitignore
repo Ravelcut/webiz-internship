@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 certificates
+
+# Next.js build output
+.next/
+*.tsbuildinfo
+out/

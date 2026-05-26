@@ -2,8 +2,15 @@
 import { api } from './api';
 
 export const authService = {
+  // Company login
   login: async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
+    return data;
+  },
+
+  // Talent login
+  loginTalent: async (email, password) => {
+    const { data } = await api.post('/auth/login/talent', { email, password });
     return data;
   },
 

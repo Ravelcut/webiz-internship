@@ -20,6 +20,7 @@ import { TaskPriority, TaskState } from '../constants/enums';
 import { Icon } from '@iconify/react';
 import { companyService } from '../services/companyService';
 import { authService } from '../services/authService';
+import { talentService } from '../services/talentService';
 import Login from '../components/auth/Login/Login';
 
 
@@ -40,6 +41,7 @@ function App() {
 
   const [boardData, setBoardData] = useState(() => boardColumns.map(col => ({ ...col, cards: [], count: 0 })));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [listData, setListData] = useState([]);
   const [talentsList, setTalentsList] = useState([]);
@@ -56,6 +58,7 @@ function App() {
     const logged = localStorage.getItem('isLoggedIn') === 'true';
     if (logged) {
       setIsLoggedIn(true);
+      setUserRole(localStorage.getItem('userRole'));
       
       const savedUser = localStorage.getItem('userData');
       if (savedUser) setCurrentUser(JSON.parse(savedUser));
@@ -71,21 +74,44 @@ function App() {
     }
   }, []);
 
+  // Handle automatic logout on unauthorized requests
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      handleLogout();
+    };
+    window.addEventListener('unauthorized', handleUnauthorized);
+    return () => {
+      window.removeEventListener('unauthorized', handleUnauthorized);
+    };
+  }, []);
+
   // Persist to local storage
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn || !userRole) return;
     
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [assignments, talents, employees, profileData] = await Promise.all([
-          companyService.getAssignments(),
-          companyService.getTalents().catch(() => []),
-          companyService.getEmployees().catch(() => []),
-          companyService.getProfile().catch(() => null)
-        ]);
+        let assignments = [];
+        let talents = [];
+        let employees = [];
+        let profileData = null;
+
+        if (userRole === 'company') {
+          [assignments, talents, employees, profileData] = await Promise.all([
+            companyService.getAssignments(),
+            companyService.getTalents().catch(() => []),
+            companyService.getEmployees().catch(() => []),
+            companyService.getProfile().catch(() => null)
+          ]);
+        } else if (userRole === 'talent') {
+          [assignments, profileData] = await Promise.all([
+            talentService.getAssignments().catch(() => []),
+            talentService.getProfile().catch(() => null)
+          ]);
+        }
         
         setListData(assignments);
         setTalentsList(talents);
@@ -125,6 +151,7 @@ function App() {
   }, [listData]);
 
   const handleCreateTask = async (taskData) => {
+    if (userRole === 'talent') return; // Talents cannot create tasks
     const priorityColors = {
       [TaskPriority.Low]: '#08AC16',
       [TaskPriority.Medium]: '#F19100',
@@ -197,7 +224,11 @@ function App() {
 
     // Fire API call in background (don't block UI)
     try {
-      await companyService.updateAssignment({ id: taskId, ...finalUpdates });
+      if (userRole === 'company') {
+        await companyService.updateAssignment({ id: taskId, ...finalUpdates });
+      } else if (userRole === 'talent' && finalUpdates.status !== undefined) {
+        await talentService.updateAssignmentState({ assignmentId: taskId, taskState: finalUpdates.status });
+      }
     } catch (error) {
       console.warn('Backend update failed (offline mode):', error.message);
     }
@@ -230,6 +261,7 @@ function App() {
   const handleLoginSuccess = (user) => {
     setCurrentUser(user);
     setIsLoggedIn(true);
+    setUserRole(localStorage.getItem('userRole'));
   };
 
   const handleOpenComments = (task) => {

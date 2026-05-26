@@ -1,46 +1,32 @@
 // @ts-nocheck
-import { api } from './api';
+//
+// DEPRECATED: This service is no longer needed.
+//
+// Invitation management has been consolidated into the actual entity services:
+//   - Company-side invitation management → companyService.ts
+//     (inviteRecruiter, revokeRecruiterInvitation, getRecruiterInvitations,
+//      inviteTalent, getTalentInvitations)
+//   - Talent-side invitation handling → talentService.ts
+//     (getInvitations, acceptInvitation, rejectInvitation)
+//
+// This file is kept as a stub to avoid breaking existing imports.
+// Please migrate any callers to use companyService or talentService instead.
+//
+
+import { companyService } from './companyService';
+import { talentService } from './talentService';
 
 export const invitationService = {
-  // --- Recruiter Invitations ---
-  inviteRecruiter: async (recruiterId) => {
-    const { data } = await api.post('/invitations/recruiters', { recruiterId });
-    return data;
-  },
+  // --- Recruiter Invitations (delegates to companyService) ---
+  inviteRecruiter: companyService.inviteRecruiter,
+  getRecruiterInvitations: companyService.getRecruiterInvitations,
+  deleteRecruiterInvitation: companyService.revokeRecruiterInvitation,
 
-  getRecruiterInvitations: async () => {
-    const { data } = await api.get('/invitations/recruiters');
-    return data;
-  },
+  // --- Talent Invitations (delegates to companyService) ---
+  inviteTalent: companyService.inviteTalent,
+  getTalentInvitations: companyService.getTalentInvitations,
 
-  updateRecruiterInvitation: async (invitationId, status) => {
-    const { data } = await api.put(`/invitations/recruiters/${invitationId}`, { status });
-    return data;
-  },
-
-  deleteRecruiterInvitation: async (invitationId) => {
-    const { data } = await api.delete(`/invitations/recruiters/${invitationId}`);
-    return data;
-  },
-
-  // --- Talent Invitations ---
-  inviteTalent: async (talentId) => {
-    const { data } = await api.post('/invitations/talents', { talentId });
-    return data;
-  },
-
-  getTalentInvitations: async () => {
-    const { data } = await api.get('/invitations/talents');
-    return data;
-  },
-
-  updateTalentInvitation: async (invitationId, status) => {
-    const { data } = await api.put(`/invitations/talents/${invitationId}`, { status });
-    return data;
-  },
-
-  deleteTalentInvitation: async (invitationId) => {
-    const { data } = await api.delete(`/invitations/talents/${invitationId}`);
-    return data;
-  }
+  // --- Talent-side invitation handling (delegates to talentService) ---
+  acceptTalentInvitation: talentService.acceptInvitation,
+  rejectTalentInvitation: talentService.rejectInvitation,
 };

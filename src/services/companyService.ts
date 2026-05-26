@@ -1,15 +1,7 @@
 // @ts-nocheck
 import { api } from './api';
-import { clientsData } from '../data/mockData';
 
 export const companyService = {
-  // --- Companies / Clients ---
-  getCompanies: async () => {
-    // No backend endpoint exists for querying other companies.
-    // Return an empty array to ensure no dummy data is displayed.
-    return [];
-  },
-
   // --- Profile ---
   getProfile: async () => {
     const { data } = await api.get('/company/profile');
@@ -22,8 +14,7 @@ export const companyService = {
   },
 
   deleteProfile: async () => {
-    const { data } = await api.delete('/company/profile');
-    return data;
+    await api.delete('/company/profile');
   },
 
   getCompanyDetails: async (id) => {
@@ -117,5 +108,38 @@ export const companyService = {
   deleteAssignment: async (assignmentId) => {
     const { data } = await api.delete(`/company/assignments/${assignmentId}`);
     return data;
+  },
+
+  // --- Talent Join Requests (Company manages incoming requests) ---
+  getTalentJoinRequests: async () => {
+    const { data } = await api.get('/company/talent-join-requests');
+    return data;
+  },
+
+  approveTalentJoinRequest: async (joinRequestId) => {
+    const { data } = await api.post(`/company/talent-join-requests/${joinRequestId}/approve`);
+    return data;
+  },
+
+  rejectTalentJoinRequest: async (joinRequestId) => {
+    const { data } = await api.post(`/company/talent-join-requests/${joinRequestId}/reject`);
+    return data;
+  },
+
+  // --- Recruiter Join Requests (Company manages incoming requests) ---
+  getRecruiterJoinRequests: async () => {
+    const { data } = await api.get('/company/recruiter-join-requests');
+    return data;
+  },
+
+  approveRecruiterJoinRequest: async (joinRequestId) => {
+    const { data } = await api.post(`/company/recruiter-join-requests/${joinRequestId}/approve`);
+    return data;
+  },
+
+  rejectRecruiterJoinRequest: async (joinRequestId) => {
+    const { data } = await api.post(`/company/recruiter-join-requests/${joinRequestId}/reject`);
+    return data;
   }
 };
+
