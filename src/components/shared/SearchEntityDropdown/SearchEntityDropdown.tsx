@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '@iconify/react';
-import { tasksData } from '../../../data/mockData';
 import './SearchEntityDropdown.css';
 
 const STATUS_COLOR_MAP = {

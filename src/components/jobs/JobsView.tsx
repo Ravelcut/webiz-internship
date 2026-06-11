@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { jobsStats, jobsListData } from '../../data/mockData';
 import { jobService } from '../../services/jobService';
 import NewJobModal from '../shared/NewJobModal/NewJobModal';
 import './JobsView.css';
@@ -12,6 +11,7 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedJobToEdit, setSelectedJobToEdit] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const statusColors = {
     'Active': '#2F80ED',
@@ -19,21 +19,20 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
     'Frozen': '#ED5757',
   };
 
-  const displayJobs = jobs.length > 0 
-    ? jobs.map((job) => {
-        const mappedStatus = job.status || 'Active';
-        return {
-          id: `#${job.id}`,
-          title: job.title || 'Untitled Position',
-          seniority: job.seniority || 'Middle',
-          salaryType: job.salaryType || 'Gross',
-          salaryRange: job.salaryRange || 'Negotiable',
-          status: mappedStatus,
-          statusColor: statusColors[mappedStatus] || '#2F80ED',
-          rawJob: job
-        };
-      })
-    : jobsListData.map(j => ({ ...j, id: `#${j.id}` })); // Ensure fallback also has '#' prefix for visual consistency
+  const displayJobs = (jobs || []).map((job) => {
+    const mappedStatus = job.status || 'Active';
+    return {
+      id: `#${job.id}`,
+      title: job.title || 'Untitled Position',
+      seniority: job.seniority || 'Middle',
+      salaryType: job.salaryType || 'Gross',
+      salaryRange: job.salaryRange || 'Negotiable',
+      status: mappedStatus,
+      statusColor: statusColors[mappedStatus] || '#2F80ED',
+      companyName: job.companyName || 'Unknown Company',
+      rawJob: job
+    };
+  });
 
   const totalCount = displayJobs.length;
   const activeCount = displayJobs.filter(j => j.status === 'Active').length;
@@ -47,9 +46,21 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
     { label: 'Frozen/Archived', value: frozenCount.toString(), icon: 'solar:close-circle-bold', color: '#ED5757' },
   ];
 
-  const filteredJobs = activeFilter === 'All'
-    ? displayJobs
-    : displayJobs.filter(j => j.status.toLowerCase() === activeFilter.toLowerCase());
+  const filteredJobs = displayJobs
+    .filter(j => {
+      if (activeFilter === 'All') return true;
+      return j.status.toLowerCase() === activeFilter.toLowerCase();
+    })
+    .filter(j => {
+      if (!searchTerm.trim()) return true;
+      const term = searchTerm.toLowerCase();
+      return (
+        j.title.toLowerCase().includes(term) ||
+        (j.companyName && j.companyName.toLowerCase().includes(term)) ||
+        j.seniority.toLowerCase().includes(term) ||
+        j.id.toLowerCase().includes(term)
+      );
+    });
 
   const filters = [
     { label: 'All', color: '#2F80ED' },
@@ -150,7 +161,12 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
           <div className="toolbar-left">
             <div className="search-box">
               <Icon icon="solar:magnifer-linear" className="search-icon" />
-              <input type="text" placeholder="Search jobs" />
+              <input 
+                type="text" 
+                placeholder="Search jobs" 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
 
             <div className="status-filters">
@@ -206,7 +222,10 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
             >
               <div className="job-card-header">
                 <div className="job-id-title">
-                  <span className="job-id">{job.id}</span>
+                  <div className="job-header-top">
+                    <span className="job-id">{job.id}</span>
+                    {job.companyName && <span className="job-company">{job.companyName}</span>}
+                  </div>
                   <span className="job-title">{job.title}</span>
                 </div>
                 

@@ -1,8 +1,13 @@
 // @ts-nocheck
 import React from 'react';
 import { Icon } from '@iconify/react';
-import { dashboardInterviews } from '../../../../data/mockData';
 import './InterviewSchedule.css';
+
+const dashboardInterviews = [
+  { id: 1, title: 'Interview Meeting', job: 'Product Designer', date: '24 April, 2026', time: '16:00 - 17:00', status: 'Scheduled', statusColor: '#08AC16', attendee: 'Amanda Gray' },
+  { id: 2, title: 'Resume Review', job: 'Software Engineer', date: '25 April, 2026', time: '14:00 - 14:30', status: 'Pending', statusColor: '#F19100', attendees: ['Alex Mercer', 'Devon Lane'] },
+  { id: 3, title: 'Technical Discussion', job: 'DevOps Lead', date: '26 April, 2026', time: '11:00 - 12:00', status: 'Scheduled', statusColor: '#08AC16', attendee: 'Casey Jones' },
+];
 
 const InterviewSchedule = () => {
   return (

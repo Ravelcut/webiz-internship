@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import CandidatesTable from '../CandidatesTable/CandidatesTable';
 import { companyService } from '../../../services/companyService';
-import { candidatesData } from '../../../data/mockData';
 import CVPreviewModal from '../CVPreviewModal/CVPreviewModal';
 import AddToJobModal from '../AddToJobModal/AddToJobModal';
 import './CandidatesView.css';

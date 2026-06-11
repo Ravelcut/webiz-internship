@@ -19,20 +19,24 @@ export const companyService = {
 
   getCompanyDetails: async (id) => {
     try {
-      const [profile, employees] = await Promise.all([
-        api.get('/company/profile').then(res => res.data),
-        api.get('/company/employees').then(res => res.data)
+      const [profile, employees, jobs, assignments] = await Promise.all([
+        api.get('/company/profile').then(res => res.data).catch(() => null),
+        api.get('/company/employees').then(res => res.data).catch(() => []),
+        api.get('/company/jobs').then(res => res.data).catch(() => []),
+        api.get('/company/assignments').then(res => res.data).catch(() => [])
       ]);
       return {
         ...profile,
-        id: profile.id || id,
-        name: profile.companyName || `${profile.name} ${profile.lastname}`,
-        employees: employees.map(emp => ({
+        id: profile?.id || id,
+        name: profile?.companyName || (profile ? `${profile.name} ${profile.lastname}`.trim() : 'Anonymous Company'),
+        employees: (employees || []).map(emp => ({
           id: emp.id,
           name: `${emp.name} ${emp.lastname}`.trim() || 'Anonymous Employee',
           email: emp.email,
           role: 'Employee'
-        }))
+        })),
+        jobs: jobs || [],
+        assignments: assignments || []
       };
     } catch (error) {
       console.warn('Backend getCompanyDetails failed, using fallback:', error.message);
@@ -41,14 +45,8 @@ export const companyService = {
   },
 
   getCompanies: async () => {
-    try {
-      // Try to fetch from talent API first in case user has permission, or fallback to mock data
-      const { data } = await api.get('/talent/companies/all');
-      return data;
-    } catch (error) {
-      console.warn('Backend getCompanies failed, using mock data fallback:', error.message);
-      return null;
-    }
+    const { data } = await api.get('/talent/companies/all');
+    return data;
   },
 
   // --- Recruiters ---

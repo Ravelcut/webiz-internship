@@ -15,7 +15,6 @@ import CandidatesView from '../components/candidates/CandidatesView/CandidatesVi
 import CandidateDetail from '../components/candidates/CandidateDetail/CandidateDetail';
 import JobsView from '../components/jobs/JobsView';
 import JobDetail from '../components/jobs/JobDetail/JobDetail';
-import { tasksData, boardColumns, clientsData, candidatesData } from '../data/mockData';
 import { TaskPriority, TaskState } from '../constants/enums';
 import { Icon } from '@iconify/react';
 import { companyService } from '../services/companyService';
@@ -43,6 +42,12 @@ const STATUS_STYLES = {
   3: { bg: '#E0F2FE', text: '#0369A1' }, // InReview
   4: { bg: '#08AC16', text: '#FFFFFF' }, // Done
 };
+
+const BOARD_COLUMNS = [
+  { id: 'todo', title: TaskState.Pending, indicatorColor: '#2F80ED' },
+  { id: 'inprogress', title: TaskState.InProgress, indicatorColor: '#F19100' },
+  { id: 'completed', title: TaskState.Done, indicatorColor: '#08AC16' }
+];
 
 const formatBackendDate = (dateStr) => {
   if (!dateStr) return 'No due date';
@@ -154,7 +159,7 @@ function App() {
     setIsNewTaskOpen(true);
   };
 
-  const [boardData, setBoardData] = useState(() => boardColumns.map(col => ({ ...col, cards: [], count: 0 })));
+  const [boardData, setBoardData] = useState(() => BOARD_COLUMNS.map(col => ({ ...col, cards: [], count: 0 })));
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
@@ -260,7 +265,7 @@ function App() {
       }
       
       // Update board data based on fetched assignments
-      const newBoardData = boardColumns.map(col => {
+      const newBoardData = BOARD_COLUMNS.map(col => {
         const colTasks = mappedAssignments.filter(t => t.status === col.title);
         return {
           ...col,
@@ -454,7 +459,7 @@ function App() {
     
     // Clear local state variables to guarantee no cross-profile data leakage
     setListData([]);
-    setBoardData(boardColumns.map(col => ({ ...col, cards: [], count: 0 })));
+    setBoardData(BOARD_COLUMNS.map(col => ({ ...col, cards: [], count: 0 })));
     setTalentsList([]);
     setEmployeesList([]);
     setProfile(null);
@@ -534,6 +539,7 @@ function App() {
             selectedCandidate ? (
               <CandidateDetail 
                 candidate={selectedCandidate} 
+                tasks={listData}
                 onBack={() => setSelectedCandidate(null)}
                 onNewTask={(entity) => {
                   setInitialTaskEntity(entity);
@@ -553,6 +559,10 @@ function App() {
             selectedJob ? (
               <JobDetail 
                 job={selectedJob} 
+                jobs={jobsList}
+                talents={talentsList}
+                onJobSelect={setSelectedJob}
+                onRefreshJobs={fetchData}
                 onBack={() => setSelectedJob(null)} 
               />
             ) : (

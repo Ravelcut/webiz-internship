@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import ClientsTable from '../ClientsTable/ClientsTable';
 import ClientsFooter from '../ClientsFooter/ClientsFooter';
-import { clientStats, clientsData } from '../../../data/mockData';
 import { companyService } from '../../../services/companyService';
 import { talentService } from '../../../services/talentService';
 import { recruiterService } from '../../../services/recruiterService';
@@ -47,11 +46,11 @@ const ClientsView = ({ onNewTask, onSelectCompany }) => {
           });
           setCompanies(mapped);
         } else {
-          setCompanies(clientsData);
+          setCompanies([]);
         }
       } catch (error) {
-        console.error('Failed to fetch companies, using mock fallback:', error);
-        setCompanies(clientsData);
+        console.error('Failed to fetch companies:', error);
+        setCompanies([]);
       } finally {
         setIsLoading(false);
       }
@@ -59,6 +58,14 @@ const ClientsView = ({ onNewTask, onSelectCompany }) => {
 
     fetchCompanies();
   }, []);
+
+  const clientStats = {
+    companies: companies.length,
+    employees: companies.length * 3,
+    price: '82,980$',
+    cost: '12,980$',
+    profit: '70,000$'
+  };
 
   return (
     <div className="clients-view">

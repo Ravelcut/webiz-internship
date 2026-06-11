@@ -1,7 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
-import { candidateProfile } from '../../../data/mockData';
 import ProfileCard from './widgets/ProfileCard';
 import JobStatusCard from './widgets/JobStatusCard';
 import WorkHistoryCard from './widgets/WorkHistoryCard';
@@ -14,16 +13,72 @@ import CandidateTasks from './widgets/CandidateTasks';
 import CandidateDocuments from './widgets/CandidateDocuments';
 import './CandidateDetail.css';
 
-const CandidateDetail = ({ candidate, onBack, onNewTask }) => {
+const DUMMY_PROFILE = {
+  id: 1,
+  name: 'Giorgi Kheladze',
+  role: 'Software designer',
+  position: 'Digital Product Designer',
+  experience: '21 Years',
+  age: 21,
+  status: 'Open',
+  statusDesc: 'Relevant Approaches',
+  accountPrivacy: 'Public account',
+  cvPrivacy: 'Fully Visible',
+  workHistory: [
+    { title: 'Senior Product Designer', company: 'Webiz International', date: 'Jul 2020 - Present', duration: '2 years 3 months' },
+    { title: 'UI/UX Designer', company: 'Surwill LLC', date: 'Jul 2020 - Jun 2021', duration: '1 years 8 months' },
+    { title: 'Graphic Designer', company: 'Adobe', date: 'Jul 2020 - Jun 2021', duration: '1 years 8 months' },
+    { title: 'UX Designer', company: 'Google', date: 'Jul 2020 - Jun 2021', duration: '1 years 8 months' },
+    { title: 'Researcher', company: 'Sony Playstation', date: 'Jul 2020 - Jun 2021', duration: '1 years 8 months' },
+    { title: 'Graphic Designer', company: 'Adobe', date: 'Jul 2020 - Jun 2021', duration: '1 years 8 months' },
+  ],
+  education: [
+    { title: 'Computer Science', school: 'Free University', date: '2020 - 2024' },
+    { title: 'Computer Science', school: 'Free University', date: '2020 - 2024' },
+    { title: 'Computer Science', school: 'Free University', date: '2020 - 2024' },
+  ],
+  courses: [
+    { title: 'Computer Science', school: 'Free University' },
+    { title: 'Computer Science', school: 'Free University' },
+  ],
+  projects: [
+    { id: 1, name: 'Citycom', type: 'External', logo: 'solar:buildings-2-bold' },
+    { id: 2, name: 'Iternity', type: 'External', logo: 'solar:buildings-2-bold' },
+    { id: 3, name: 'Paybox', type: 'External', logo: 'solar:buildings-2-bold' },
+  ],
+  contact: {
+    mobile: '+995 599 20 21 55',
+    email: 'usernamc@info.com',
+    country: 'Georgia',
+    city: 'Tbilisi',
+    address: '32 Road Village Str.',
+    zip: '3301',
+    recruiterEmail: 'Headhunter123@info.com',
+    recruiterId: '23',
+    whatsapp: '+995 599 20 21 55',
+  },
+  family: {
+    name: 'Laura Palmer',
+    phone: '+995 599 12 34 56',
+    relation: 'Sister',
+    emergency: 'N/A',
+  },
+  billing: {
+    bank: 'TBC BANK',
+    country: 'Georgia',
+  }
+};
+
+const CandidateDetail = ({ candidate, tasks = [], onBack, onNewTask }) => {
   const [activeTab, setActiveTab] = useState('resume');
 
-  // Merge backend candidate with candidateProfile for rich visual appearance
+  // Merge backend candidate with local dummy profile details for rich visual UI layout
   const displayCandidate = {
-    ...candidateProfile,
+    ...DUMMY_PROFILE,
     ...candidate,
     contact: {
-      ...candidateProfile.contact,
-      email: candidate?.email || candidateProfile.contact.email,
+      ...DUMMY_PROFILE.contact,
+      email: candidate?.email || DUMMY_PROFILE.contact.email,
       ...candidate?.contact
     }
   };
@@ -37,7 +92,7 @@ const CandidateDetail = ({ candidate, onBack, onNewTask }) => {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'tasks':
-        return <CandidateTasks candidate={displayCandidate} />;
+        return <CandidateTasks candidate={displayCandidate} tasks={tasks} />;
       case 'documents':
         return <CandidateDocuments candidate={displayCandidate} />;
       case 'resume':

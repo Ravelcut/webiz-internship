@@ -8,6 +8,7 @@ const InvitationsManager = () => {
   const [invitations, setInvitations] = useState([]);
   const [joinRequests, setJoinRequests] = useState([]);
   const [allCompanies, setAllCompanies] = useState([]);
+  const [joinedCompanies, setJoinedCompanies] = useState([]);
   const [activeTab, setActiveTab] = useState('invitations');
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -29,14 +30,16 @@ const InvitationsManager = () => {
     setIsLoading(true);
     setError('');
     try {
-      const [invs, jrs, companies] = await Promise.all([
+      const [invs, jrs, companies, joined] = await Promise.all([
         recruiterService.getInvitations().catch(() => []),
         recruiterService.getJoinRequests().catch(() => []),
         recruiterService.getAllCompanies().catch(() => []),
+        recruiterService.getCompanies().catch(() => []),
       ]);
       setInvitations(invs || []);
       setJoinRequests(jrs || []);
       setAllCompanies(companies || []);
+      setJoinedCompanies(joined || []);
     } catch (err) {
       setError('Failed to load data. Please try again.');
       console.error('InvitationsManager fetch error:', err);
@@ -79,7 +82,15 @@ const InvitationsManager = () => {
       setJoinRequests(jrs || []);
       setSuccessMsg('Join request sent!');
     } catch (err) {
-      setError('Failed to send join request.');
+      const status = err?.response?.status;
+      if (status === 409) {
+        const msg = err?.response?.data?.message || 'Already associated with this company.';
+        setSuccessMsg(msg);
+        // Refresh data to sync badge state
+        await fetchData();
+      } else {
+        setError('Failed to send join request.');
+      }
     } finally {
       setActionLoading(null);
     }
@@ -122,6 +133,7 @@ const InvitationsManager = () => {
 
   // Filter out companies the recruiter has already joined or has pending requests for
   const pendingCompanyIds = new Set(joinRequests.map(j => j.companyId));
+  const joinedCompanyIds = new Set(joinedCompanies.map(c => c.id));
 
   return (
     <div className="im-container">
@@ -203,7 +215,7 @@ const InvitationsManager = () => {
                     <Icon icon="solar:buildings-2-bold" />
                   </div>
                   <div className="im-card-info">
-                    <h4 className="im-card-title">{inv.companyName || 'Company'}</h4>
+                    <h4 className="im-card-title">{inv.company?.companyName || 'Company'}</h4>
                     <p className="im-card-meta">
                       <Icon icon="solar:calendar-minimalistic-linear" />
                       {formatDate(inv.createdAt || inv.sentAt)}
@@ -254,7 +266,7 @@ const InvitationsManager = () => {
                     <Icon icon="solar:buildings-2-bold" />
                   </div>
                   <div className="im-card-info">
-                    <h4 className="im-card-title">{jr.companyName || 'Company'}</h4>
+                    <h4 className="im-card-title">{jr.company?.companyName || 'Company'}</h4>
                     <p className="im-card-meta">
                       <Icon icon="solar:calendar-minimalistic-linear" />
                       {formatDate(jr.createdAt)}
@@ -293,6 +305,7 @@ const InvitationsManager = () => {
             <div className="im-list">
               {allCompanies.map(company => {
                 const hasPending = pendingCompanyIds.has(company.id);
+                const isJoined = joinedCompanyIds.has(company.id);
                 return (
                   <div key={company.id} className="im-card">
                     <div className="im-card-icon im-card-icon-browse">
@@ -308,7 +321,12 @@ const InvitationsManager = () => {
                       )}
                     </div>
                     <div className="im-card-actions">
-                      {hasPending ? (
+                      {isJoined ? (
+                        <span className="im-status-badge" style={{ color: '#10b981', background: 'rgba(16, 185, 129, 0.1)' }}>
+                          <Icon icon="solar:check-circle-linear" />
+                          Partnered
+                        </span>
+                      ) : hasPending ? (
                         <span className="im-status-badge" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>
                           <Icon icon="solar:clock-circle-linear" />
                           Request Pending

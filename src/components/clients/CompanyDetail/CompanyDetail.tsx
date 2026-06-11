@@ -97,11 +97,11 @@ const CompanyDetail = ({ company, onBack, onNewTask }) => {
           
           <div className="grid-middle">
             <InterviewSchedule />
-            <JobsManagement />
+            <JobsManagement jobs={details?.jobs || []} />
           </div>
 
           <div className="grid-bottom">
-            <ActionsTable />
+            <ActionsTable assignments={details?.assignments || []} />
           </div>
         </div>
       </main>
