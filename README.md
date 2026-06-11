@@ -1,14 +1,15 @@
 # TaskManager Webiz - High-Fidelity Management Dashboard
 
-TaskManager Webiz is a premium, feature-rich task and talent management platform built with React. It provides a modular and highly interactive interface for managing tasks, clients, candidates, and job applications with a focus on high-fidelity design and seamless user experience.
+TaskManager Webiz is a premium, feature-rich task and talent management platform built with React, Next.js, and TypeScript. It is integrated directly with a C# ASP.NET Core API backend to provide a live, real-time interface for managing tasks, clients, candidates, and job applications.
 
 ## 🚀 Tech Stack
 
-- **Core:** React 18+
+- **Core:** React 19, Next.js 16+ (using Turbopack)
+- **Language:** TypeScript
 - **Styling:** Vanilla CSS (Custom Modular System)
 - **Icons:** [Iconify](https://iconify.design/) (Solar, Carbon, and custom SVG icons)
-- **Build Tool:** Vite
-- **Typography:** Inter (Google Fonts)
+- **Database/Backend Integration:** Integrated with an ASP.NET Core REST API (`HRTodoManagement`) with Npgsql PostgreSQL backend.
+- **Typography:** Inter & Outfit (Google Fonts)
 
 ---
 
@@ -16,11 +17,12 @@ TaskManager Webiz is a premium, feature-rich task and talent management platform
 
 ```bash
 src/
+├── app/                 # Next.js App Router (page.tsx main app interface)
 ├── components/
 │   ├── board/           # Kanban Board implementation (Columns & Cards)
-│   ├── candidates/      # Talent management (Table, Detail View, Resume widgets)
+│   ├── candidates/      # Talent management (Table, Detail View, CV widgets)
 │   ├── clients/         # Client & Company management (Overview & Detail)
-│   ├── jobs/            # Job application tracking
+│   ├── jobs/            # Job application tracking & Job Detail views
 │   ├── layout/          # Global layout (Sidebar, TopHeader, Navigation)
 │   ├── planner/         # List-based planner (Today/Tomorrow/Upcoming)
 │   ├── shared/          # Reusable high-fidelity components
@@ -29,8 +31,12 @@ src/
 │   │   ├── EmptyState   # Premium SVG-illustrated empty states
 │   │   └── Dropdowns    # Specialized entity search and selection
 │   └── table/           # Advanced data tables
-├── data/                # Mock data system
-├── App.jsx              # Main shell and routing logic
+├── constants/           # Shared enums and styling maps
+├── services/            # Axios API client integrations connecting to the C# Backend
+│   ├── api.ts           # Central API configuration
+│   ├── jobService.ts    # Job management endpoint bindings
+│   ├── talentService.ts # Talent profile and application handlers
+│   └── companyService.ts# Company profile and task management endpoints
 └── index.css            # Global design tokens and base styles
 ```
 
@@ -38,24 +44,24 @@ src/
 
 ## ✨ Key Features
 
-### 1. Multi-View Task Management
+### 1. Live Backend API Feeds
+- **Zero Mock Data:** Entirely decoupled from static files; all dashboard stats, tasks, company details, and talents derive directly from the PostgreSQL backend database.
+- **Synchronized Workflows:** Creating tasks, updating job statuses, and inviting talents syncs instantly via REST API endpoints.
+
+### 2. Interactive Job Detail Views
+- **Job Position Switcher:** Dropdown overlay listing all jobs in the workspace allowing dynamic position switching.
+- **Status Picker:** Instant status dropdown pills ("Active", "Hired", "Frozen") that update the backend and persist details.
+- **Starred Candidates:** Allows starring (favoriting) candidates with real-time updates to the "My Choices" filter pool.
+- **Live Search & Filters:** Dynamic candidate search filtering by name, role, or skill tags.
+- **List & Grid Layouts:** Switch seamlessly between a classic table representation and custom grid cards featuring avatars, match-score progress indicators, and recruitment stage pills.
+
+### 3. Multi-View Task Management
 - **Planner View:** Grouped tasks by timeline (Today, Tomorrow, Upcoming) with overdue alerts.
 - **Kanban Board:** Interactive status tracking with custom columns and card-based metadata.
 - **Table View:** Dense data representation with sorting and quick action triggers.
 
-### 2. Advanced Task Creation (`NewTaskModal`)
-- **Smart Entity Binding:** Dynamically search and link tasks to Clients, Jobs, or Talent.
-- **Status & Priority:** Floating labels with color-coded indicators.
-- **Integrated Discussions:** Embedded comment thread within the modal for quick context.
-
-### 3. Team Discussion System
-- **Side Panel (`TaskCommentsPanel`):** Dedicated context for deep discussions, accessible from any task view.
-- **Real-time Input:** Character counters, file attachment previews, and reply threading.
-- **Comment Lifecycle:** Fully interactive "Edit" and "Delete" flows with optimistic UI patterns.
-
-### 4. Modular Detail Views
-- **Company Detail:** Displays related projects, contacts, and active tasks.
-- **Candidate Detail:** Modular resume-style layout including work history, education, and skill widgets.
+### 4. Smart Team Discussions
+- **Task Comments:** Side panel with reply threads, edit, and delete lifecycle flows.
 
 ---
 
@@ -65,18 +71,13 @@ The project adheres to a strict Design System defined in `src/index.css`.
 
 ### Tokens
 - **Primary Blue:** `#2F80ED` (Actions & Active states)
-- **Backgrounds:** `#F7F7F7` (App Shell), `#FDFDFD` (Cards), `#F5F8FD` (Input areas)
+- **Backgrounds:** `#F4F6F8` (App Shell), `#FFFFFF` (Cards), `#F5F8FD` (Input areas)
 - **Text:** `#182939` (Heading), `#687A9E` (Secondary), `#B4BDCE` (Subtle)
 - **Status Indicators:**
-  - `To-Do`: `#2F80ED`
-  - `In Progress`: `#F19100`
-  - `Completed`: `#08AC16`
-  - `High Priority`: `#ED5757`
-
-### Aesthetics
-- **Shadows:** Multi-layered soft shadows for depth (`box-shadow: 0px 8px 16px rgba(19, 19, 20, 0.1)`).
-- **Animations:** Smooth entry transitions (`fadeIn`, `slideInRight`, `ntmSlideUp`).
-- **Typography:** Weighted `Inter` font for maximum readability and a premium "SaaS" feel.
+  - `Active / To-Do`: `#2F80ED`
+  - `In Progress / Screening`: `#F19100`
+  - `Hired / Completed`: `#08AC16`
+  - `Frozen / High Priority`: `#ED5757`
 
 ---
 
@@ -96,15 +97,6 @@ The project adheres to a strict Design System defined in `src/index.css`.
    ```bash
    npm run build
    ```
-
----
-
-## 🛠 Future Roadmap for Developers
-
-- **Dynamic Data API:** Replace `mockData.js` with Axios/Fetch calls to a backend service.
-- **Drag & Drop:** Implement `react-beautiful-dnd` or `dnd-kit` for the Kanban Board.
-- **Global State:** Transition from `App.jsx` prop-drilling to **Context API** or **Zustand** for shared states (like the Comments visibility).
-- **Filtering Logic:** Connect the `FilterBar` UI to the task list filtering functions.
 
 ---
 
