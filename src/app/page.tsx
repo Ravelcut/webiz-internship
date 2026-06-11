@@ -174,6 +174,7 @@ function App() {
 
   // Compute completed tasks from live state
   const completedTasks = listData.filter(task => task.completed || task.status === TaskState.Done);
+  const activeTasks = listData.filter(task => !task.completed && task.status !== TaskState.Done);
 
   // Safely restore user session and states on client-side mount (solves Next.js SSR hydration blocks)
   useEffect(() => {
@@ -568,7 +569,7 @@ function App() {
                 {activeTab === 'planner' && (
                   <div className="list-scroll">
                     <TaskListView 
-                      tasks={listData} 
+                      tasks={activeTasks} 
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                       onUpdateTask={handleUpdateTask}
@@ -593,7 +594,7 @@ function App() {
                 {activeTab === 'table' && (
                   <div className="list-scroll">
                     <TaskTable 
-                      tasks={listData} 
+                      tasks={activeTasks} 
                       variant="default"
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
