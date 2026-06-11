@@ -63,6 +63,7 @@ const CandidatesView = ({ onNewTask, onSelectCandidate }) => {
           companyService.getAllTalents().catch(() => []),
           companyService.getTalentInvitations().catch(() => [])
         ]);
+        setInvitations(invitationsData);
         const acceptedIds = new Set(updatedTalents.map(t => t.id));
         const pendingIds = new Set(
           invitationsData
@@ -150,7 +151,29 @@ const CandidatesView = ({ onNewTask, onSelectCandidate }) => {
         showToast('Invitation revoked successfully!', 'success');
       } catch (err) {
         console.error(err);
-        showToast('Failed to revoke invitation.', 'error');
+        if (err.response?.status === 404) {
+          // The invitation is already gone, so we refresh the state
+          const invitationsData = await companyService.getTalentInvitations().catch(() => []);
+          setInvitations(invitationsData);
+          
+          const allTalentsData = await companyService.getAllTalents().catch(() => []);
+          const acceptedIds = new Set(talents.map(t => t.id));
+          const pendingIds = new Set(
+            invitationsData
+              .filter(i => i.invitationStatus === 'Pending' || i.invitationStatus === 0)
+              .map(i => i.talentId)
+          );
+          const filteredAllTalents = allTalentsData.map(t => ({
+            id: t.id,
+            name: `${t.name} ${t.lastname}`.trim() || 'Anonymous',
+            email: t.email
+          })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
+          setAvailableTalents(filteredAllTalents);
+          
+          showToast('Invitation already revoked or does not exist.', 'success');
+        } else {
+          showToast('Failed to revoke invitation.', 'error');
+        }
       }
     }
   };
