@@ -6,6 +6,7 @@ import ClientsFooter from '../ClientsFooter/ClientsFooter';
 import { clientStats, clientsData } from '../../../data/mockData';
 import { companyService } from '../../../services/companyService';
 import { talentService } from '../../../services/talentService';
+import { recruiterService } from '../../../services/recruiterService';
 import './ClientsView.css';
 
 const ClientsView = ({ onNewTask, onSelectCompany }) => {
@@ -20,8 +21,10 @@ const ClientsView = ({ onNewTask, onSelectCompany }) => {
 
         if (userRole === 'talent') {
           rawCompanies = await talentService.getAllCompanies();
+        } else if (userRole === 'recruiter') {
+          rawCompanies = await recruiterService.getAllCompanies();
         } else {
-          rawCompanies = await companyService.getCompanies();
+          rawCompanies = null;
         }
 
         if (rawCompanies && Array.isArray(rawCompanies) && rawCompanies.length > 0) {
