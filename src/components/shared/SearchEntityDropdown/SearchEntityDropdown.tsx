@@ -5,26 +5,36 @@ import { tasksData } from '../../../data/mockData';
 import './SearchEntityDropdown.css';
 
 const STATUS_COLOR_MAP = {
-  'In Progress': '#F19100',
-  'To Do': '#EAF2FD',
-  'Completed': '#08AC16',
+  'Pending': '#EAF2FD',
+  'InProgress': '#F19100',
+  'InReview': '#E0F2FE',
+  'Done': '#08AC16',
 };
 
 const SearchEntityDropdown = ({ onClose }) => {
   const [query, setQuery] = useState('');
   const [hoveredIndex, setHoveredIndex] = useState(-1);
+  const [tasks, setTasks] = useState([]);
   const inputRef = useRef(null);
 
   useEffect(() => {
     inputRef.current?.focus();
+    const savedList = localStorage.getItem('taskmanager_list_tasks');
+    if (savedList) {
+      try {
+        setTasks(JSON.parse(savedList));
+      } catch (err) {
+        console.error('Failed to parse cached tasks:', err);
+      }
+    }
   }, []);
 
   const filteredTasks = query.trim()
-    ? tasksData.filter(t =>
+    ? tasks.filter(t =>
         t.title.toLowerCase().includes(query.toLowerCase()) ||
-        t.assignee.toLowerCase().includes(query.toLowerCase())
+        (t.description && t.description.toLowerCase().includes(query.toLowerCase()))
       ).slice(0, 5)
-    : tasksData.slice(0, 5);
+    : tasks.slice(0, 5);
 
   const handleClear = () => {
     setQuery('');
@@ -67,7 +77,12 @@ const SearchEntityDropdown = ({ onClose }) => {
               </div>
               <div className="result-avatar">
                 <span className="result-avatar-initials">
-                  {task.assignee.charAt(0)}
+                  {(
+                    task.talent?.name ||
+                    task.employee?.name ||
+                    task.assignee ||
+                    'U'
+                  ).charAt(0).toUpperCase()}
                 </span>
               </div>
             </div>

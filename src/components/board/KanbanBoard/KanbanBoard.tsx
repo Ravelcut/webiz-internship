@@ -13,6 +13,12 @@ const entityIcons = {
   'file-user': 'solar:file-text-linear',
 };
 
+const COLUMN_TITLES = {
+  [TaskState.Pending]: 'To Do',
+  [TaskState.InProgress]: 'In Progress',
+  [TaskState.Done]: 'Completed',
+};
+
 const PRIORITY_OPTIONS = [
   { value: TaskPriority.High, color: '#ED5757' },
   { value: TaskPriority.Medium, color: '#F19100' },
@@ -21,7 +27,7 @@ const PRIORITY_OPTIONS = [
   { value: TaskPriority.Lowest, color: '#2F80ED' },
 ];
 
-const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority, onUpdateTask }) => {
+const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority, onUpdateTask, onSelectTask }) => {
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
   const initials = card.assignee
     ? card.assignee.split(' ').map((n) => n[0]).join('').slice(0, 2)
@@ -74,6 +80,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
       {...provided?.draggableProps}
       {...provided?.dragHandleProps}
       style={style}
+      onClick={() => onSelectTask && onSelectTask(card)}
     >
       <div className="card-top-row">
         <div className="card-meta-left">
@@ -106,7 +113,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
               </div>
             )}
           </div>
-          <div className="comment-badge-wrapper" onClick={() => onOpenComments && onOpenComments(card)}>
+          <div className="comment-badge-wrapper" onClick={(e) => { e.stopPropagation(); onOpenComments && onOpenComments(card); }}>
             <Icon icon="solar:chat-round-line-linear" className="comment-icon" />
             <span className="comment-count">{card.comments || 0}</span>
           </div>
@@ -179,13 +186,13 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
   );
 };
 
-const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask }) => {
+const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask, onSelectTask }) => {
   return (
     <div className="kanban-column">
       <div className="column-header">
         <div className="column-header-left">
           <div className="status-bar" style={{ background: column.indicatorColor }} />
-          <span className="column-title">{column.title}</span>
+          <span className="column-title">{COLUMN_TITLES[column.title] || column.title}</span>
           <span className="column-count">{column.count}</span>
         </div>
         <button className="column-add-btn">
@@ -211,6 +218,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask }
                     onUpdateTask={onUpdateTask}
                     provided={provided}
                     snapshot={snapshot}
+                    onSelectTask={onSelectTask}
                   />
                 )}
               </Draggable>
@@ -227,7 +235,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask }
   );
 };
 
-const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateTask }) => {
+const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateTask, onSelectTask }) => {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
@@ -252,6 +260,24 @@ const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateT
       : Array.from(destCol.cards || []);
 
     const [movedCard] = sourceCards.splice(source.index, 1);
+
+    if (source.droppableId !== destination.droppableId) {
+      const isCompletedCol = destCol.title === TaskState.Done;
+      movedCard.completed = isCompletedCol;
+      movedCard.status = destCol.title;
+      
+      const statusStyles = {
+        [TaskState.Pending]: { bg: '#EAF2FD', text: '#182939' },
+        [TaskState.InProgress]: { bg: '#F19100', text: '#FFFFFF' },
+        [TaskState.PendingReview]: { bg: '#F5E6FF', text: '#7B2CB5' },
+        [TaskState.InReview]: { bg: '#E0F2FE', text: '#0369A1' },
+        [TaskState.Done]: { bg: '#08AC16', text: '#FFFFFF' },
+      };
+      const style = statusStyles[destCol.title] || statusStyles[TaskState.Pending];
+      movedCard.statusBg = style.bg;
+      movedCard.statusText = style.text;
+    }
+
     destCards.splice(destination.index, 0, movedCard);
 
     const newBoardData = [...columns];
@@ -307,6 +333,7 @@ const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateT
             onOpenComments={onOpenComments} 
             onUpdatePriority={handleUpdatePriority}
             onUpdateTask={onUpdateTask}
+            onSelectTask={onSelectTask}
           />
         ))}
       </div>

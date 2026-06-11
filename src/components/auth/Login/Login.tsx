@@ -5,7 +5,7 @@ import { authService } from '../../../services/authService';
 import './Login.css';
 
 const Login = ({ onLoginSuccess }) => {
-  const [role, setRole] = useState('company'); // 'company' or 'talent'
+  const [role, setRole] = useState('company'); // 'company', 'talent', or 'recruiter'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,10 +34,12 @@ const Login = ({ onLoginSuccess }) => {
         response = await authService.login(cleanEmail, cleanPassword);
       } else if (role === 'talent') {
         response = await authService.loginTalent(cleanEmail, cleanPassword);
+      } else if (role === 'recruiter') {
+        response = await authService.loginRecruiter(cleanEmail, cleanPassword);
       }
 
       // 3. Save session and trigger login success
-      if (response && (response.companyId || response.talentId || response.token)) {
+      if (response && (response.companyId || response.talentId || response.recruiterId || response.token)) {
         localStorage.setItem('userRole', role);
         localStorage.setItem('userData', JSON.stringify(response));
         localStorage.setItem('isLoggedIn', 'true');
@@ -89,6 +91,12 @@ const Login = ({ onLoginSuccess }) => {
             onClick={() => setRole('talent')}
           >
             Talent
+          </button>
+          <button 
+            className={`role-btn ${role === 'recruiter' ? 'active' : ''}`}
+            onClick={() => setRole('recruiter')}
+          >
+            Recruiter
           </button>
         </div>
 

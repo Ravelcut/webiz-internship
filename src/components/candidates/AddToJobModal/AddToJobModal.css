@@ -1,0 +1,133 @@
+.job-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.job-modal-card {
+  background: #FFFFFF;
+  width: 460px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+}
+
+.job-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.job-modal-header .title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.job-header-icon {
+  font-size: 22px;
+  color: #2F80ED;
+}
+
+.job-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0F172A;
+  font-weight: 600;
+}
+
+.job-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 0;
+}
+
+.job-modal-sub {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.job-select-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #CBD5E1;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #1E293B;
+  outline: none;
+  background: #FFFFFF;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.job-select-input:focus {
+  border-color: #2F80ED;
+}
+
+.job-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.job-modal-footer button {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.job-modal-footer .cancel-btn {
+  background: #F8FAFC;
+  border: 1px solid #CBD5E1;
+  color: #475569;
+}
+
+.job-modal-footer .cancel-btn:hover {
+  background: #EFF6FF;
+}
+
+.job-modal-footer .add-btn {
+  background: #2F80ED;
+  color: #FFFFFF;
+  border: none;
+}
+
+.job-modal-footer .add-btn:hover:not(:disabled) {
+  background: #1A6FD6;
+}
+
+.job-modal-footer .add-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,10 +1,26 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import './ClientsTable.css';
 
 const ClientsTable = ({ clients, onNewTask, onSelectCompany }) => {
   const [activeMenuId, setActiveMenuId] = useState(null);
+
+  useEffect(() => {
+    if (activeMenuId === null) return;
+
+    const handleOutsideClick = (event) => {
+      const container = document.querySelector(`.col-actions[data-client-id="${activeMenuId}"]`);
+      if (container && !container.contains(event.target)) {
+        setActiveMenuId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [activeMenuId]);
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -71,7 +87,7 @@ const ClientsTable = ({ clients, onNewTask, onSelectCompany }) => {
 
             <div className="col col-score">{client.score}%</div>
 
-            <div className="col col-actions">
+            <div className="col col-actions" data-client-id={client.id}>
               <button className="row-action-btn" onClick={(e) => toggleMenu(e, client.id)}>
                 <Icon icon="solar:menu-dots-bold" />
               </button>
@@ -97,3 +113,4 @@ const ClientsTable = ({ clients, onNewTask, onSelectCompany }) => {
 };
 
 export default ClientsTable;
+

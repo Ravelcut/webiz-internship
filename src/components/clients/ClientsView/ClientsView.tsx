@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import ClientsTable from '../ClientsTable/ClientsTable';
 import ClientsFooter from '../ClientsFooter/ClientsFooter';
-import { clientStats } from '../../../data/mockData';
+import { clientStats, clientsData } from '../../../data/mockData';
 import { companyService } from '../../../services/companyService';
+import { talentService } from '../../../services/talentService';
 import './ClientsView.css';
 
 const ClientsView = ({ onNewTask, onSelectCompany }) => {
@@ -14,10 +15,40 @@ const ClientsView = ({ onNewTask, onSelectCompany }) => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const data = await companyService.getCompanies();
-        setCompanies(data);
+        const userRole = localStorage.getItem('userRole');
+        let rawCompanies = null;
+
+        if (userRole === 'talent') {
+          rawCompanies = await talentService.getAllCompanies();
+        } else {
+          rawCompanies = await companyService.getCompanies();
+        }
+
+        if (rawCompanies && Array.isArray(rawCompanies) && rawCompanies.length > 0) {
+          const mapped = rawCompanies.map((c, idx) => {
+            const colors = ['#A855F7', '#EC4899', '#6366F1', '#EF4444', '#8B5CF6', '#F59E0B', '#4F46E5', '#DB2777'];
+            return {
+              id: c.id,
+              logo: 'solar:buildings-2-bold',
+              logoColor: colors[idx % colors.length],
+              name: c.companyName || 'Anonymous Company',
+              assignedAM: '-',
+              representative: c.email || '-',
+              projects: 0,
+              status: 'Active',
+              openPositions: 0,
+              score: 100,
+              unseenMessages: 0,
+              isVerified: true
+            };
+          });
+          setCompanies(mapped);
+        } else {
+          setCompanies(clientsData);
+        }
       } catch (error) {
-        console.error('Failed to fetch companies:', error);
+        console.error('Failed to fetch companies, using mock fallback:', error);
+        setCompanies(clientsData);
       } finally {
         setIsLoading(false);
       }

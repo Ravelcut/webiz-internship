@@ -38,7 +38,7 @@ const statusOptions = Object.entries(EnumLabels.TaskState).map(([value, label]) 
   };
 });
 
-const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) => {
+const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask, onDeleteTask, onSelectTask }) => {
   const isCompleted = variant === 'completed';
 
   const entityIcons = {
@@ -104,7 +104,7 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) 
       
       <div className="table-body">
         {tasks.map((task) => (
-          <div key={task.id} className={`table-row ${isCompleted ? 'completed-row' : ''}`}>
+          <div key={task.id} className={`table-row ${isCompleted ? 'completed-row' : ''}`} onClick={() => onSelectTask && onSelectTask(task)}>
             <div className="cell checkbox-cell" onClick={(e) => { 
               e.stopPropagation(); 
               if (onUpdateTask) {
@@ -123,13 +123,13 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) 
             </div>
             
             <div className="cell message-cell">
-              <div className="message-badge" onClick={() => onOpenComments && onOpenComments(task)}>
+              <div className="message-badge" onClick={(e) => { e.stopPropagation(); onOpenComments && onOpenComments(task); }}>
                 <Icon icon="solar:chat-round-line-linear" className="message-icon" />
                 <span className="message-count">{task.comments || 0}</span>
               </div>
             </div>
             
-            <div className="cell priority-cell">
+            <div className="cell priority-cell" onClick={(e) => e.stopPropagation()}>
               <InlineDropdown
                 options={priorityOptions}
                 value={task.priority}
@@ -183,7 +183,7 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) 
             </div>
 
             {!isCompleted && (
-              <div className="cell status-cell">
+              <div className="cell status-cell" onClick={(e) => e.stopPropagation()}>
                 <InlineDropdown
                   options={statusOptions}
                   value={task.status}
@@ -203,9 +203,12 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask }) 
             )}
             
             {!isCompleted && (
-              <div className="cell actions-cell">
+              <div className="cell actions-cell" onClick={(e) => e.stopPropagation()}>
                 <Icon icon="solar:alt-arrow-right-linear" className="chevron-icon" />
-                <div className="delete-wrapper">
+                <div className="delete-wrapper" onClick={(e) => {
+                  e.stopPropagation();
+                  if (onDeleteTask) onDeleteTask(task.id);
+                }}>
                   <Icon icon="solar:trash-bin-trash-linear" className="trash-icon" />
                 </div>
               </div>

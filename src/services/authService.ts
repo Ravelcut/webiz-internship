@@ -14,6 +14,12 @@ export const authService = {
     return data;
   },
 
+  // Recruiter login
+  loginRecruiter: async (email, password) => {
+    const { data } = await api.post('/auth/login/recruiter', { email, password });
+    return data;
+  },
+
   logout: async () => {
     await api.post('/auth/logout');
   }

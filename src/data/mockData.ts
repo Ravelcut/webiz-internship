@@ -43,7 +43,7 @@ export const boardColumns = [
     id: 'todo',
     title: TaskState.Pending,
     count: 4,
-    indicatorColor: '#EAF2FD',
+    indicatorColor: '#2F80ED',
     cards: [
       { id: 'b1', priority: TaskPriority.High, priorityColor: '#ED5757', comments: 0, title: 'Task title up to 80 characters Task title up to 80 characters Task title up to', assignee: 'Devon Lane', entity: 'user', dueDate: '13 Jun 2020, 18...', overdue: false, completed: false },
       { id: 'b2', priority: TaskPriority.Medium, priorityColor: '#F19100', comments: 0, title: 'Task title up to 80 characters Task title up to 80 characters Task title up to', assignee: 'Job Name Job Name', entity: 'file-user', dueDate: '13 Jun 2020', overdue: true, completed: false },
@@ -236,14 +236,11 @@ export const requiredActions = [
 ];
 
 export const candidatesData = [
-  { id: 1, name: 'Giorgi Kheladze', role: 'Software designer', assignedHR: 'Nino Khutsishvili', status: 'Open', statusColor: '#F19100', cv: 'Giorgi_CV.pdf', messageCount: 3, avatar: 'https://i.pravatar.cc/150?u=giorgi' },
-  { id: 2, name: 'radros mushaobaa', role: 'Software engineering', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0 },
-  { id: 3, name: 'event test', role: 'Quality assurance', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0 },
-  { id: 4, name: 'nini nn', role: 'Design', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0 },
-  { id: 5, name: 'Martin Test', role: 'Software engineering', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0 },
-  { id: 6, name: 'test country', role: 'Quality assurance', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0 },
-  { id: 7, name: 'Stuart Bloom', role: 'Software engineering', assignedHR: 'Mariami Tsitelas...', status: 'Bananaaaa', statusColor: '#34747C', cv: 'aff-2910_CV.pdf', messageCount: 0 },
-  { id: 8, name: 'Flow test Check test', role: 'Quality assurance', assignedHR: null, status: 'Choose Status', cv: 'Homework.docx', messageCount: 2 },
+  { id: 1, name: 'Alex Mercer', role: 'Software Engineer', assignedHR: 'Nino Khutsishvili', status: 'Open', statusColor: '#F19100', cv: 'Alex_Mercer_CV.pdf', messageCount: 3, avatar: 'https://i.pravatar.cc/150?u=1' },
+  { id: 2, name: 'Riley Reid', role: 'Full Stack Developer', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0, avatar: 'https://i.pravatar.cc/150?u=2' },
+  { id: 3, name: 'Casey Jones', role: 'DevOps Engineer', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0, avatar: 'https://i.pravatar.cc/150?u=3' },
+  { id: 4, name: 'Sam Smith', role: 'UI/UX Designer', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0, avatar: 'https://i.pravatar.cc/150?u=4' },
+  { id: 5, name: 'Taylor Swift', role: 'QA Engineer', assignedHR: null, status: 'Choose Status', cv: null, messageCount: 0, avatar: 'https://i.pravatar.cc/150?u=5' }
 ];
 
 export const candidateProfile = {

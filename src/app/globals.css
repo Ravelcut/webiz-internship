@@ -32,6 +32,363 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+[data-theme="dark"] {
+  --white: #161519;
+  --content-bg: #0F0E11;
+  --light-gray: #212025;
+  --light-gray-alt: #26252A;
+  --stroke-gray: #2A292E;
+  --stroke-gray-50: #1C1B20;
+  --black: #ECEFF4;
+  --black-75: #A0A5B5;
+  --black-50: #717786;
+  --title-blue: #F3F4F6;
+  --blue-01: rgba(47, 128, 237, 0.15);
+}
+
+/* --- Dark Mode Global Overrides --- */
+
+/* 1. Base Shells & Views */
+[data-theme="dark"] .jobs-view,
+[data-theme="dark"] .candidates-view,
+[data-theme="dark"] .candidate-detail,
+[data-theme="dark"] .company-detail,
+[data-theme="dark"] .clients-view {
+  background: var(--content-bg) !important;
+  color: var(--black) !important;
+}
+
+/* 2. Top-level headers, cards & sidebars */
+[data-theme="dark"] .content-card,
+[data-theme="dark"] .content-header,
+[data-theme="dark"] .detail-header,
+[data-theme="dark"] .candidates-header-container,
+[data-theme="dark"] .candidates-footer,
+[data-theme="dark"] .right-sidebar,
+[data-theme="dark"] .right-sidebar-container,
+[data-theme="dark"] .team-sidebar,
+[data-theme="dark"] .jobs-management,
+[data-theme="dark"] .company-info-card,
+[data-theme="dark"] .actions-table,
+[data-theme="dark"] .interview-schedule,
+[data-theme="dark"] .widget-box,
+[data-theme="dark"] .jobs-content-card {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+}
+
+/* 3. Empty States */
+[data-theme="dark"] .empty-state-container {
+  background: transparent !important;
+}
+[data-theme="dark"] .empty-state-title {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .empty-state-subtitle {
+  color: var(--black-75) !important;
+}
+
+/* 4. Filter Bars & Search Blocks */
+[data-theme="dark"] .filter-bar-row,
+[data-theme="dark"] .search-bar-wrapper,
+[data-theme="dark"] .filter-dropdown,
+[data-theme="dark"] .dropdown-container,
+[data-theme="dark"] .search-box {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .search-box input {
+  background: transparent !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .filter-box {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .filter-selection {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .filter-chip {
+  background: var(--light-gray) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .filter-chip span {
+  color: var(--black) !important;
+}
+
+/* 5. Stat & Card Grids */
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .job-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .job-status-card,
+[data-theme="dark"] .work-history-card,
+[data-theme="dark"] .education-card,
+[data-theme="dark"] .candidate-docs-card,
+[data-theme="dark"] .candidate-tasks-card,
+[data-theme="dark"] .candidate-timeline-card,
+[data-theme="dark"] .widget-card,
+[data-theme="dark"] .doc-row,
+[data-theme="dark"] .history-item,
+[data-theme="dark"] .education-item,
+[data-theme="dark"] .work-item,
+[data-theme="dark"] .doc-item {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* 6. Buttons, Badges & Interactive items */
+[data-theme="dark"] .back-btn {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .contact-icon,
+[data-theme="dark"] .contact-btn {
+  background: var(--light-gray) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .projects-badge,
+[data-theme="dark"] .positions-badge {
+  background: var(--light-gray) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .row-action-btn {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .row-action-btn:hover {
+  background: var(--light-gray-alt) !important;
+}
+[data-theme="dark"] .action-dropdown,
+[data-theme="dark"] .action-cell .action-dropdown {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+}
+[data-theme="dark"] .dropdown-item {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .dropdown-item:hover {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .status-pill-btn {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .action-menu-btn:hover {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .status-badge-green {
+  color: #FFFFFF !important;
+}
+[data-theme="dark"] .custom-checkbox {
+  border-color: var(--stroke-gray) !important;
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .filter-pill,
+[data-theme="dark"] .view-btn {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .filter-pill.active,
+[data-theme="dark"] .view-btn.active {
+  background: rgba(47, 128, 237, 0.15) !important;
+  color: #2F80ED !important;
+  border-color: transparent !important;
+}
+[data-theme="dark"] .job-card-details {
+  border-top-color: var(--stroke-gray) !important;
+}
+
+/* 7. Lists & Tables */
+[data-theme="dark"] .clients-table-container,
+[data-theme="dark"] .candidates-table-container {
+  background: transparent !important;
+}
+[data-theme="dark"] .clients-table-header {
+  background: var(--white) !important;
+  border-bottom-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .client-row {
+  background: var(--white) !important;
+  border-bottom-color: var(--stroke-gray-50) !important;
+}
+[data-theme="dark"] .client-row:hover {
+  background: var(--light-gray-alt) !important;
+}
+[data-theme="dark"] .candidates-table tr.candidate-row {
+  background: var(--white) !important;
+}
+[data-theme="dark"] .candidates-table td {
+  border-color: var(--stroke-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .candidates-table th {
+  color: var(--black-75) !important;
+  border-bottom-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .candidate-avatar-placeholder {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+}
+
+/* 8. Text & Colors Override */
+[data-theme="dark"] .client-name,
+[data-theme="dark"] .candidate-name,
+[data-theme="dark"] .stat-value,
+[data-theme="dark"] .job-title,
+[data-theme="dark"] .detail-value,
+[data-theme="dark"] .more-btn,
+[data-theme="dark"] .header-title,
+[data-theme="dark"] .breadcrumb-current,
+[data-theme="dark"] .info-value,
+[data-theme="dark"] .member-name,
+[data-theme="dark"] .widget-header,
+[data-theme="dark"] .widget-title,
+[data-theme="dark"] .column-title,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .assignee-name,
+[data-theme="dark"] .add-task-row span,
+[data-theme="dark"] .due-text {
+  color: var(--black) !important;
+}
+
+[data-theme="dark"] .candidate-role,
+[data-theme="dark"] .breadcrumb-path,
+[data-theme="dark"] .info-label,
+[data-theme="dark"] .member-role,
+[data-theme="dark"] .detail-label,
+[data-theme="dark"] .stat-label,
+[data-theme="dark"] .priority-label {
+  color: var(--black-75) !important;
+}
+
+[data-theme="dark"] .header-breadcrumbs {
+  color: rgba(236, 239, 244, 0.6) !important;
+  border-left-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .breadcrumb-chevron {
+  color: var(--black-75) !important;
+}
+
+[data-theme="dark"] .kanban-column {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .task-list-view .task-row:hover,
+[data-theme="dark"] .task-list-view .task-row:hover .cell {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .table-row:hover {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .task-table-wrapper .cell {
+  border-bottom: 1px solid var(--stroke-gray) !important;
+}
+[data-theme="dark"] .unchecked-icon {
+  color: #3D3C40 !important;
+}
+[data-theme="dark"] .comment-msg-icon,
+[data-theme="dark"] .comment-icon,
+[data-theme="dark"] .message-icon {
+  color: #5A6070 !important;
+}
+[data-theme="dark"] .avatar-placeholder,
+[data-theme="dark"] .date-placeholder {
+  border: 1px dashed #3D3C40 !important;
+}
+[data-theme="dark"] .placeholder-icon {
+  color: #3D3C40 !important;
+}
+
+/* Modals & Popups (New Task modal, comments panel, search dropdowns) */
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .task-comments-panel,
+[data-theme="dark"] .select-entity-dropdown,
+[data-theme="dark"] .search-entity-dropdown,
+[data-theme="dark"] .comments-container,
+[data-theme="dark"] .new-task-container,
+[data-theme="dark"] .invite-modal-container {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .comments-header,
+[data-theme="dark"] .comments-input-area {
+  border-color: var(--stroke-gray) !important;
+  background: var(--white) !important;
+}
+[data-theme="dark"] .comment-bubble {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .comment-meta {
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .comment-textarea {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .form-group label {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea {
+  background: var(--light-gray) !important;
+  color: var(--black) !important;
+  border-color: var(--stroke-gray) !important;
+}
+
+/* Login screen dark mode */
+[data-theme="dark"] .login-container {
+  background: var(--content-bg) !important;
+}
+[data-theme="dark"] .login-card {
+  background: rgba(22, 21, 25, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+[data-theme="dark"] .login-title {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .login-subtitle {
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .role-selector {
+  background: var(--light-gray) !important;
+}
+[data-theme="dark"] .role-btn {
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .role-btn.active {
+  background: var(--white) !important;
+  color: #2F80ED !important;
+}
+[data-theme="dark"] .input-group label {
+  color: var(--black) !important;
+}
+[data-theme="dark"] .input-wrapper input {
+  background: var(--white) !important;
+  border-color: var(--stroke-gray) !important;
+  color: var(--black) !important;
+}
+[data-theme="dark"] .checkbox-container {
+  color: var(--black-75) !important;
+}
+[data-theme="dark"] .checkmark {
+  background-color: var(--light-gray) !important;
+  border-color: var(--stroke-gray) !important;
+}
+[data-theme="dark"] .login-footer {
+  color: var(--black-75) !important;
+}
+
 *,
 *::before,
 *::after {
@@ -70,7 +427,7 @@ input {
   flex-direction: row;
   width: 100%;
   min-height: 100vh;
-  background: #F7F7F7;
+  background: var(--content-bg);
 }
 
 .main-area {
@@ -164,7 +521,7 @@ input {
   display: flex !important;
   align-items: center !important;
   min-height: 48px !important; /* Premium height */
-  background: white;
+  background: var(--white);
   border-radius: 8px;
 }
 

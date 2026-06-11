@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { TaskState, TaskPriority, EnumLabels } from '../../../constants/enums';
+import { commentService } from '../../../services/commentService';
 import './NewTaskModal.css';
 
 const STATUS_OPTIONS = [
@@ -25,10 +26,11 @@ const ENTITY_TYPE_OPTIONS = [
 
 const ENTITY_OPTIONS = {
   Talent: [
-    { name: 'Cameron Williamson', hasAvatar: true },
-    { name: 'Eleanor Pena', hasAvatar: true },
-    { name: 'Darrell Steward', hasAvatar: true },
-    { name: 'Annette Black', hasAvatar: true },
+    { name: 'Alex Mercer', hasAvatar: true },
+    { name: 'Riley Reid', hasAvatar: true },
+    { name: 'Casey Jones', hasAvatar: true },
+    { name: 'Sam Smith', hasAvatar: true },
+    { name: 'Taylor Swift', hasAvatar: true },
   ],
   Job: [
     { name: 'Database Administrator', hasAvatar: false },
@@ -37,16 +39,14 @@ const ENTITY_OPTIONS = {
     { name: 'IT Consultant', hasAvatar: false },
   ],
   Client: [
-    { name: 'Bank of America', hasAvatar: true },
-    { name: 'The Walt Disney Company', hasAvatar: true },
-    { name: 'Mitsubishi', hasAvatar: true },
-    { name: 'Gillette', hasAvatar: true },
+    { name: 'Quantum Leap AI', hasAvatar: true },
+    { name: 'Green Grid Energy', hasAvatar: true },
+    { name: 'IronClad Security', hasAvatar: true },
+    { name: 'Blue Wave DevOps', hasAvatar: true },
   ],
   Employee: [
     { name: 'Devon Lane', hasAvatar: true },
     { name: 'Woody Harrelson', hasAvatar: true },
-    { name: 'Cameron Williamson', hasAvatar: true },
-    { name: 'Eleanor Pena', hasAvatar: true },
   ],
 };
 
@@ -58,7 +58,7 @@ const TIME_OPTIONS = [
 
 const OWNER_OPTIONS = ['Woody Harrelson', 'Devon Lane', 'Cameron Williamson', 'Eleanor Pena'];
 
-const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = [], employees = [] }) => {
+const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = [], employees = [], taskToEdit = null, onUpdateTask }) => {
   const [title, setTitle] = useState('');
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
@@ -68,53 +68,110 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
   const [entity, setEntity] = useState('');
   const [description, setDescription] = useState('');
   const [owner, setOwner] = useState('');
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: 'John Doe',
-      avatar: 'https://i.pravatar.cc/150?u=john',
-      text: 'Muse about Tunguska event two ghostly white figures in coveralls and helmets are softly dancing',
-      date: '18 Aug 2025',
-      time: '14:00',
-      attachments: [{ name: '2022certificationsick.pdf' }, { name: 'filename.pdf' }]
-    },
-    {
-      id: 2,
-      author: 'John Doe',
-      avatar: 'https://i.pravatar.cc/150?u=john',
-      text: 'Lorem John Doe Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam',
-      date: '18 Aug 2025',
-      time: '14:00',
-      replies: [
-        {
-          author: 'John Doe',
-          avatar: 'https://i.pravatar.cc/150?u=john',
-          text: 'Muse about Tunguska event two ghostly white figures in coveralls and helmets are softly dancing',
-          date: '18 Aug 2025',
-          time: '14:00',
-        }
-      ]
-    }
-  ]);
+  const [comments, setComments] = useState([]);
   const [isCommentsVisible, setIsCommentsVisible] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [showCommentActions, setShowCommentActions] = useState(null);
 
+  // Pre-populate fields in edit mode
   useEffect(() => {
-    if (employees.length > 0 && !owner) {
-      setOwner(`${employees[0].name} ${employees[0].lastname}`.trim());
-    } else if (!owner) {
-      setOwner('Woody Harrelson');
+    if (isOpen && taskToEdit) {
+      setTitle(taskToEdit.title || '');
+      setStatus(taskToEdit.status !== undefined ? taskToEdit.status : '');
+      setPriority(taskToEdit.priority !== undefined ? taskToEdit.priority : '');
+      
+      // Convert due date
+      let dateVal = '';
+      if (taskToEdit.raw?.dueDate) {
+        dateVal = taskToEdit.raw.dueDate.split('T')[0];
+      } else if (taskToEdit.dueDate && taskToEdit.dueDate !== 'No due date') {
+        try {
+          const d = new Date(taskToEdit.dueDate);
+          if (!isNaN(d.getTime())) {
+            const yyyy = d.getFullYear();
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            dateVal = `${yyyy}-${mm}-${dd}`;
+          }
+        } catch (e) {}
+      }
+      setDueDate(dateVal);
+      
+      // Assignee mapping
+      let eType = '';
+      let eName = '';
+      if (taskToEdit.raw?.talent) {
+        eType = 'Talent';
+        eName = `${taskToEdit.raw.talent.name || ''} ${taskToEdit.raw.talent.lastname || ''}`.trim();
+      } else if (taskToEdit.raw?.employee) {
+        eType = 'Employee';
+        eName = `${taskToEdit.raw.employee.name || ''} ${taskToEdit.raw.employee.lastname || ''}`.trim();
+      } else {
+        eType = taskToEdit.entity === 'laptop' ? 'Employee' : 'Talent';
+        eName = taskToEdit.assignee;
+      }
+      setEntityType(eType);
+      setEntity(eName);
+      
+      setDescription(taskToEdit.description || '');
+      setOwner(eName || taskToEdit.assignee || '');
+    } else if (isOpen && !taskToEdit) {
+      resetForm();
     }
-  }, [employees, owner]);
+  }, [isOpen, taskToEdit]);
+
+  // Fetch task comments
+  useEffect(() => {
+    const fetchComments = async () => {
+      if (isOpen && taskToEdit?.id) {
+        try {
+          const fetched = await commentService.getComments(taskToEdit.id);
+          const mapped = (fetched || []).map(c => {
+            const dateObj = new Date(c.timestamp || c.createdAt || Date.now());
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const dateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+            const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+            
+            return {
+              id: c.id,
+              author: c.authorName || 'Anonymous User',
+              avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(c.authorName || 'Anonymous')}&background=random&color=fff&size=128`,
+              text: c.text,
+              date: dateStr,
+              time: timeStr,
+            };
+          });
+          setComments(mapped);
+          setIsCommentsVisible(true);
+        } catch (error) {
+          console.error('Failed to load comments:', error);
+          setComments([]);
+        }
+      } else {
+        setComments([]);
+        setIsCommentsVisible(false);
+      }
+    };
+    fetchComments();
+  }, [isOpen, taskToEdit]);
 
   useEffect(() => {
-    if (isOpen && initialEntity) {
+    if (!taskToEdit) {
+      if (employees.length > 0 && !owner) {
+        setOwner(`${employees[0].name} ${employees[0].lastname}`.trim());
+      } else if (!owner) {
+        setOwner('');
+      }
+    }
+  }, [employees, owner, taskToEdit]);
+
+  useEffect(() => {
+    if (isOpen && initialEntity && !taskToEdit) {
       setEntityType(initialEntity.typeName || 'Client');
       setEntity(initialEntity.name);
     }
-  }, [isOpen, initialEntity]);
+  }, [isOpen, initialEntity, taskToEdit]);
 
   const [openDropdown, setOpenDropdown] = useState(null);
   const modalRef = useRef(null);
@@ -144,15 +201,13 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
   };
 
   const dynamicEntityOptions = {
-    Talent: talents.length > 0 ? talents.map(t => ({ name: `${t.name} ${t.lastname}`.trim(), hasAvatar: true })) : ENTITY_OPTIONS.Talent,
-    Employee: employees.length > 0 ? employees.map(e => ({ name: `${e.name} ${e.lastname}`.trim(), hasAvatar: true })) : ENTITY_OPTIONS.Employee,
+    Talent: talents.map(t => ({ name: `${t.name} ${t.lastname}`.trim(), hasAvatar: true })),
+    Employee: employees.map(e => ({ name: `${e.name} ${e.lastname}`.trim(), hasAvatar: true })),
     Job: ENTITY_OPTIONS.Job,
     Client: ENTITY_OPTIONS.Client
   };
 
-  const dynamicOwnerOptions = employees.length > 0 
-    ? employees.map(e => `${e.name} ${e.lastname}`.trim()) 
-    : OWNER_OPTIONS;
+  const dynamicOwnerOptions = employees.map(e => `${e.name} ${e.lastname}`.trim());
 
   const handleCreate = () => {
     if (!title.trim()) return;
@@ -192,6 +247,22 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
     onClose();
   };
 
+  const handleSave = () => {
+    if (!title.trim()) return;
+
+    const formattedDate = dueDate ? formatDate(dueDate) : 'No due date';
+
+    onUpdateTask?.(taskToEdit.id, {
+      title,
+      status,
+      priority,
+      dueDate: formattedDate,
+      description,
+    });
+    resetForm();
+    onClose();
+  };
+
   const resetForm = () => {
     setTitle('');
     setStatus('');
@@ -204,7 +275,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
     if (employees.length > 0) {
       setOwner(`${employees[0].name} ${employees[0].lastname}`.trim());
     } else {
-      setOwner('Woody Harrelson');
+      setOwner('');
     }
     setOpenDropdown(null);
     setIsCommentsVisible(false);
@@ -216,18 +287,46 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
     onClose();
   };
 
-  const handleAddComment = () => {
+  const handleAddComment = async () => {
     if (!newComment.trim()) return;
-    const comment = {
-      id: Date.now(),
-      author: 'John Doe',
-      avatar: 'https://i.pravatar.cc/150?u=john',
-      text: newComment,
-      date: '18 Aug 2025',
-      time: '14:00',
-    };
-    setComments([comment, ...comments]);
-    setNewComment('');
+    
+    if (taskToEdit) {
+      try {
+        const created = await commentService.createComment(taskToEdit.id, newComment.trim());
+        const dateObj = new Date(created.timestamp || created.createdAt || Date.now());
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const dateStr = `${dateObj.getDate()} ${months[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+        const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        
+        const comment = {
+          id: created.id,
+          author: created.authorName || 'Anonymous User',
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(created.authorName || 'Anonymous')}&background=random&color=fff&size=128`,
+          text: created.text,
+          date: dateStr,
+          time: timeStr,
+        };
+        const updatedComments = [comment, ...comments];
+        setComments(updatedComments);
+        setNewComment('');
+        
+        // Notify parent of updated comments count
+        onUpdateTask?.(taskToEdit.id, { comments: updatedComments.length });
+      } catch (error) {
+        console.error('Failed to add comment:', error);
+      }
+    } else {
+      const comment = {
+        id: Date.now(),
+        author: 'John Doe',
+        avatar: 'https://i.pravatar.cc/150?u=john',
+        text: newComment,
+        date: '18 Aug 2025',
+        time: '14:00',
+      };
+      setComments([comment, ...comments]);
+      setNewComment('');
+    }
   };
 
   const handleEditComment = (id, newText) => {
@@ -262,7 +361,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
             <div className="ntm-header-icon">
               <Icon icon="solar:list-check-minimalistic-bold" />
             </div>
-            <span className="ntm-header-title">New Task</span>
+            <span className="ntm-header-title">{taskToEdit ? 'Edit Task' : 'New Task'}</span>
           </div>
           <button className="ntm-close-btn" onClick={onClose}>
             <Icon icon="solar:close-linear" />
@@ -356,7 +455,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
               </div>
             </div>
 
-            <div className="ntm-select-wrapper ntm-full" onClick={(e) => { e.stopPropagation(); toggleDropdown('entityType'); }}>
+            <div className={`ntm-select-wrapper ntm-full ${taskToEdit ? 'ntm-disabled' : ''}`} onClick={(e) => { if (!taskToEdit) { e.stopPropagation(); toggleDropdown('entityType'); } }}>
               <div className={`ntm-select ${entityType ? 'has-value' : ''}`}>
                 <Icon 
                   icon={getEntityTypeOption()?.icon || 'solar:user-circle-linear'} 
@@ -368,7 +467,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
                 <Icon icon="solar:alt-arrow-down-linear" className="ntm-chevron" />
               </div>
               {entityType && <label className="ntm-select-label">Entity Type</label>}
-              {openDropdown === 'entityType' && (
+              {openDropdown === 'entityType' && !taskToEdit && (
                 <div className="ntm-dropdown">
                   {ENTITY_TYPE_OPTIONS.map((opt) => (
                     <button
@@ -390,8 +489,8 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
             </div>
 
             <div
-              className={`ntm-select-wrapper ntm-full ${!entityType ? 'ntm-disabled' : ''}`}
-              onClick={(e) => { if (entityType) { e.stopPropagation(); toggleDropdown('entity'); } }}
+              className={`ntm-select-wrapper ntm-full ${(!entityType || taskToEdit) ? 'ntm-disabled' : ''}`}
+              onClick={(e) => { if (entityType && !taskToEdit) { e.stopPropagation(); toggleDropdown('entity'); } }}
             >
               <div className={`ntm-select ${entity ? 'has-value' : ''}`}>
                 <span className={entity ? 'ntm-select-value' : 'ntm-select-placeholder'}>
@@ -400,7 +499,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
                 <Icon icon="solar:alt-arrow-down-linear" className="ntm-chevron" />
               </div>
               {entity && <label className="ntm-select-label">Select Entity</label>}
-              {openDropdown === 'entity' && entityType && (
+              {openDropdown === 'entity' && entityType && !taskToEdit && (
                 <div className="ntm-dropdown">
                   {(dynamicEntityOptions[entityType] || []).map((item) => (
                     <button
@@ -432,7 +531,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
               </div>
             </div>
 
-            <div className="ntm-select-wrapper ntm-full" onClick={(e) => { e.stopPropagation(); toggleDropdown('owner'); }}>
+            <div className={`ntm-select-wrapper ntm-full ${taskToEdit ? 'ntm-disabled' : ''}`} onClick={(e) => { if (!taskToEdit) { e.stopPropagation(); toggleDropdown('owner'); } }}>
               <div className={`ntm-select ${owner ? 'has-value' : ''}`}>
                 <span className={owner ? 'ntm-select-value' : 'ntm-select-placeholder'}>
                   {owner || 'Task Owner'}
@@ -440,7 +539,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
                 <Icon icon="solar:alt-arrow-down-linear" className="ntm-chevron" />
               </div>
               {owner && <label className="ntm-select-label">Task Owner</label>}
-              {openDropdown === 'owner' && (
+              {openDropdown === 'owner' && !taskToEdit && (
                 <div className="ntm-dropdown">
                   {dynamicOwnerOptions.map((name) => (
                     <button
@@ -509,26 +608,28 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
                           <span className="ntm-comment-time">{comment.date}  •  {comment.time}</span>
                         </div>
                       </div>
-                      <div className="ntm-comment-header-actions">
-                        <div className="ntm-comment-action-trigger" onClick={(e) => { e.stopPropagation(); setShowCommentActions(showCommentActions === comment.id ? null : comment.id); }}>
-                          <Icon icon="solar:menu-dots-bold" />
-                          {showCommentActions === comment.id && (
-                            <div className="ntm-comment-popover">
-                              <button onClick={() => setEditingCommentId(comment.id)}>
-                                <Icon icon="solar:pen-linear" />
-                                <span>Edit</span>
-                              </button>
-                              <button onClick={() => handleDeleteComment(comment.id)}>
-                                <Icon icon="solar:trash-bin-trash-linear" />
-                                <span>Delete</span>
-                              </button>
-                            </div>
-                          )}
+                      {!taskToEdit && (
+                        <div className="ntm-comment-header-actions">
+                          <div className="ntm-comment-action-trigger" onClick={(e) => { e.stopPropagation(); setShowCommentActions(showCommentActions === comment.id ? null : comment.id); }}>
+                            <Icon icon="solar:menu-dots-bold" />
+                            {showCommentActions === comment.id && (
+                              <div className="ntm-comment-popover">
+                                <button onClick={() => setEditingCommentId(comment.id)}>
+                                  <Icon icon="solar:pen-linear" />
+                                  <span>Edit</span>
+                                </button>
+                                <button onClick={() => handleDeleteComment(comment.id)}>
+                                  <Icon icon="solar:trash-bin-trash-linear" />
+                                  <span>Delete</span>
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          <button className="ntm-comment-reply-btn">
+                            <Icon icon="solar:reply-linear" />
+                          </button>
                         </div>
-                        <button className="ntm-comment-reply-btn">
-                          <Icon icon="solar:reply-linear" />
-                        </button>
-                      </div>
+                      )}
                     </div>
 
                     <div className="ntm-comment-card-body">
@@ -590,7 +691,11 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
 
         <div className="ntm-footer">
           <button className="ntm-cancel-btn" onClick={handleCancel}>Cancel</button>
-          <button className="ntm-create-btn" onClick={handleCreate}>Create</button>
+          {taskToEdit ? (
+            <button className="ntm-create-btn" onClick={handleSave}>Save</button>
+          ) : (
+            <button className="ntm-create-btn" onClick={handleCreate}>Create</button>
+          )}
         </div>
       </div>
     </div>

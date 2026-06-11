@@ -181,3 +181,293 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Invite Modal Styles */
+.invite-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.invite-modal-content {
+  background: white;
+  width: 440px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.invite-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.invite-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #36475F;
+  font-weight: 600;
+}
+
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #8C9BAE;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.invite-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-label {
+  font-size: 14px;
+  color: #36475F;
+  font-weight: 500;
+}
+
+.invite-select, .invite-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #E5E9F2;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 14px;
+  color: #36475F;
+  outline: none;
+  background: white;
+  box-sizing: border-box;
+}
+
+.invite-select:focus, .invite-input:focus {
+  border-color: #2F80ED;
+}
+
+.or-divider {
+  text-align: center;
+  font-size: 12px;
+  color: #8C9BAE;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.invite-message {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.invite-message.success {
+  background: #EAF9EC;
+  color: #08AC16;
+}
+
+.invite-message.error {
+  background: #FDF2F2;
+  color: #ED5757;
+}
+
+.invite-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.invite-modal-footer button {
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancel-btn {
+  background: #F4F6F8;
+  border: 1px solid #E5E9F2;
+  color: #36475F;
+}
+
+.cancel-btn:hover {
+  background: #EBEFF2;
+}
+
+.send-btn {
+  background: #2F80ED;
+  border: none;
+  color: white;
+}
+
+.send-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.send-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Toast Notification */
+.toast-message {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10000;
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1), 0px 4px 12px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #08AC16;
+}
+
+.toast-message.success {
+  border-left-color: #08AC16;
+}
+
+.toast-message.error {
+  border-left-color: #ED5757;
+}
+
+.toast-icon {
+  font-size: 20px;
+}
+
+.toast-message.success .toast-icon {
+  color: #08AC16;
+}
+
+.toast-message.error .toast-icon {
+  color: #ED5757;
+}
+
+.toast-message span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1E293B;
+}
+
+/* Similar Candidates Loading Overlay */
+.search-similar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+}
+
+.loader-box {
+  background: #FFFFFF;
+  padding: 32px 40px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0px 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.spinner-large {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E2E8F0;
+  border-top-color: #2F80ED;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loader-box p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #475569;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Candidates Tabs */
+.candidates-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid #E5E9F2;
+}
+
+.candidates-tab-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #687A9E;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.candidates-tab-btn:hover {
+  background: #F1F5F9;
+  color: #36475F;
+}
+
+.candidates-tab-btn.active {
+  background: #EBF2FD;
+  color: #2F80ED;
+  border-color: #2F80ED33;
+  font-weight: 600;
+}
+
+.invitation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #2F80ED;
+  color: #FFFFFF;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.candidates-tab-btn.active .invitation-badge {
+  background: #2F80ED;
+}
+

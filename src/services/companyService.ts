@@ -40,6 +40,17 @@ export const companyService = {
     }
   },
 
+  getCompanies: async () => {
+    try {
+      // Try to fetch from talent API first in case user has permission, or fallback to mock data
+      const { data } = await api.get('/talent/companies/all');
+      return data;
+    } catch (error) {
+      console.warn('Backend getCompanies failed, using mock data fallback:', error.message);
+      return null;
+    }
+  },
+
   // --- Recruiters ---
   getRecruiters: async () => {
     const { data } = await api.get('/company/recruiters');
@@ -72,8 +83,23 @@ export const companyService = {
     return data;
   },
 
+  getAllTalents: async () => {
+    const { data } = await api.get('/company/talents/all');
+    return data;
+  },
+
   inviteTalent: async (talentId) => {
     const { data } = await api.post(`/company/talents/invite/${talentId}`);
+    return data;
+  },
+
+  deleteTalent: async (talentId) => {
+    const { data } = await api.delete(`/company/talents/${talentId}`);
+    return data;
+  },
+
+  revokeTalentInvitation: async (invitationId) => {
+    const { data } = await api.delete(`/company/talents/invitations/${invitationId}`);
     return data;
   },
 

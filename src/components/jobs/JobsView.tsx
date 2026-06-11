@@ -4,17 +4,69 @@ import { Icon } from '@iconify/react';
 import { jobsStats, jobsListData } from '../../data/mockData';
 import './JobsView.css';
 
-const JobsView = ({ onJobClick }) => {
+const JobsView = ({ listData = [], onJobClick }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [openDropdownId, setOpenDropdownId] = useState(null);
+
+  const prioritySeniority = {
+    'Low': 'Junior',
+    'Medium': 'Middle',
+    'High': 'Senior',
+    'Critical': 'Lead',
+    'Lowest': 'Intern'
+  };
+
+  const stateStatus = {
+    'Pending': 'Active',
+    'InProgress': 'Active',
+    'InReview': 'Active',
+    'Done': 'Hired'
+  };
+
+  const statusColors = {
+    'Active': '#2F80ED',
+    'Hired': '#08AC16',
+    'Frozen': '#ED5757',
+  };
+
+  const jobs = listData.length > 0 
+    ? listData.map((task) => {
+        const mappedStatus = stateStatus[task.status] || 'Active';
+        return {
+          id: `#${task.id}`,
+          title: task.title,
+          seniority: prioritySeniority[task.priority] || 'Middle',
+          salaryType: 'Gross',
+          salaryRange: 'Negotiable',
+          status: mappedStatus,
+          statusColor: statusColors[mappedStatus] || '#2F80ED',
+          rawTask: task
+        };
+      })
+    : jobsListData;
+
+  const totalCount = jobs.length;
+  const activeCount = jobs.filter(j => j.status === 'Active').length;
+  const hiredCount = jobs.filter(j => j.status === 'Hired').length;
+  const frozenCount = jobs.filter(j => j.status === 'Frozen').length;
+
+  const stats = [
+    { label: 'All Jobs', value: totalCount.toString(), icon: 'solar:suitcase-tag-bold', color: '#2F80ED' },
+    { label: 'Active', value: activeCount.toString(), icon: 'solar:play-circle-bold', color: '#2F80ED' },
+    { label: 'Hired', value: hiredCount.toString(), icon: 'solar:check-circle-bold', color: '#08AC16' },
+    { label: 'Frozen/Archived', value: frozenCount.toString(), icon: 'solar:close-circle-bold', color: '#ED5757' },
+  ];
+
+  const filteredJobs = activeFilter === 'All'
+    ? jobs
+    : jobs.filter(j => j.status.toLowerCase() === activeFilter.toLowerCase());
 
   const filters = [
     { label: 'All', color: '#2F80ED' },
     { label: 'Active', color: '#2F80ED' },
     { label: 'Hired', color: '#08AC16' },
     { label: 'Frozen', color: '#ED5757' },
-    { label: 'Archived', color: '#C5C9CD' },
   ];
 
   const dropdownItems = [
@@ -29,7 +81,7 @@ const JobsView = ({ onJobClick }) => {
     <div className="jobs-view animate-fade-in">
       {/* Stats Bar */}
       <div className="stats-grid">
-        {jobsStats.map((stat, index) => (
+        {stats.map((stat, index) => (
           <div key={index} className="stat-card">
             <div className="stat-icon-box" style={{ backgroundColor: stat.color }}>
               <Icon icon={stat.icon} />
@@ -91,7 +143,7 @@ const JobsView = ({ onJobClick }) => {
 
         {/* Jobs Grid */}
         <div className="job-cards-grid">
-          {jobsListData.map(job => (
+          {filteredJobs.map(job => (
             <div 
               key={job.id} 
               className="job-card shadow-premium"

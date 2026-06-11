@@ -14,8 +14,19 @@ import CandidateTasks from './widgets/CandidateTasks';
 import CandidateDocuments from './widgets/CandidateDocuments';
 import './CandidateDetail.css';
 
-const CandidateDetail = ({ candidate = candidateProfile, onBack, onNewTask }) => {
+const CandidateDetail = ({ candidate, onBack, onNewTask }) => {
   const [activeTab, setActiveTab] = useState('resume');
+
+  // Merge backend candidate with candidateProfile for rich visual appearance
+  const displayCandidate = {
+    ...candidateProfile,
+    ...candidate,
+    contact: {
+      ...candidateProfile.contact,
+      email: candidate?.email || candidateProfile.contact.email,
+      ...candidate?.contact
+    }
+  };
 
   const tabs = [
     { id: 'resume', label: 'Resume' },
@@ -26,9 +37,9 @@ const CandidateDetail = ({ candidate = candidateProfile, onBack, onNewTask }) =>
   const renderTabContent = () => {
     switch (activeTab) {
       case 'tasks':
-        return <CandidateTasks candidate={candidate} />;
+        return <CandidateTasks candidate={displayCandidate} />;
       case 'documents':
-        return <CandidateDocuments candidate={candidate} />;
+        return <CandidateDocuments candidate={displayCandidate} />;
       case 'resume':
       default:
         return (
@@ -36,22 +47,22 @@ const CandidateDetail = ({ candidate = candidateProfile, onBack, onNewTask }) =>
             {/* Main Content Column */}
             <div className="main-column">
               <div className="top-widgets">
-                <ProfileCard candidate={candidate} onNewTask={onNewTask} />
-                <JobStatusCard candidate={candidate} />
+                <ProfileCard candidate={displayCandidate} onNewTask={onNewTask} />
+                <JobStatusCard candidate={displayCandidate} />
               </div>
               
               <div className="middle-widgets">
-                <WorkHistoryCard workHistory={candidate.workHistory} />
-                <EducationCard education={candidate.education} courses={candidate.courses} />
+                <WorkHistoryCard workHistory={displayCandidate.workHistory} />
+                <EducationCard education={displayCandidate.education} courses={displayCandidate.courses} />
               </div>
             </div>
 
             {/* Right Sidebar Column */}
             <aside className="right-sidebar">
-              <ProjectsCarousel projects={candidate.projects} />
-              <ContactDetailsCard contact={candidate.contact} />
-              <FamilyMemberCard family={candidate.family} />
-              <BillingInfoCard billing={candidate.billing} />
+              <ProjectsCarousel projects={displayCandidate.projects} />
+              <ContactDetailsCard contact={displayCandidate.contact} />
+              <FamilyMemberCard family={displayCandidate.family} />
+              <BillingInfoCard billing={displayCandidate.billing} />
             </aside>
           </div>
         );

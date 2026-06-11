@@ -15,6 +15,31 @@ const JobDetail = ({ job = { title: 'Front End Developer', status: 'Hired' }, on
     { id: 'inprogress', label: 'In Progress', count: 9 },
   ];
 
+  const candidates = [];
+  if (job?.rawTask?.talent) {
+    const t = job.rawTask.talent;
+    candidates.push({
+      id: t.id || 999,
+      name: `${t.name} ${t.lastname}`.trim() || t.email || 'Anonymous',
+      role: 'Assigned Talent',
+      source: 'Internal DB',
+      skills: [{ name: 'Database', y: '1y' }],
+      exp: '1 Year',
+      score: 100,
+      scoreLabel: 'Matched',
+      scoreColor: '#08AC16',
+      stage: job.status || 'Active',
+      stageBg: '#EAF2FD',
+      stageColor: '#2F80ED',
+      stageIcon: 'solar:check-circle-linear'
+    });
+  }
+
+  const displayCandidates = [
+    ...candidates,
+    ...jobCandidates.filter(jc => !candidates.some(c => c.id === jc.id))
+  ];
+
   return (
     <div className="job-detail-view fade-in">
       <div className="job-detail-content">
@@ -119,7 +144,7 @@ const JobDetail = ({ job = { title: 'Front End Developer', status: 'Hired' }, on
                 </tr>
               </thead>
               <tbody>
-                {jobCandidates.map((candidate) => (
+                {displayCandidates.map((candidate) => (
                   <tr key={candidate.id} className="candidate-row">
                     <td className="name-cell">
                       <div className="candidate-avatar-info">

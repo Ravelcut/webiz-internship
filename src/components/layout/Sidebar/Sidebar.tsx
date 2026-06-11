@@ -3,17 +3,33 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import './Sidebar.css';
 
-const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen, onLogout }) => {
-  const navIcons = [
-    { icon: 'solar:widget-linear', id: 'dashboard' },
-    { icon: 'solar:users-group-rounded-linear', id: 'people' },
-    { icon: 'solar:suitcase-linear', id: 'jobs' },
-    { icon: 'solar:user-speak-linear', id: 'referrals' },
-    { icon: 'solar:document-text-linear', id: 'documents' },
-    { icon: 'solar:calendar-minimalistic-linear', id: 'calendar' },
-    { icon: 'solar:chart-square-linear', id: 'reports' },
-    { icon: 'solar:star-fall-2-linear', id: 'ai' },
-  ];
+const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen, onLogout, userRole, theme, onThemeToggle, onSettings }) => {
+  const getNavIcons = () => {
+    if (userRole === 'recruiter') {
+      return [
+        { icon: 'solar:widget-linear', id: 'dashboard', label: 'Dashboard' },
+        { icon: 'solar:buildings-2-linear', id: 'companies', label: 'Companies' },
+        { icon: 'solar:letter-opened-linear', id: 'invitations', label: 'Invitations' },
+        { icon: 'solar:suitcase-linear', id: 'jobs', label: 'Jobs' },
+        { icon: 'solar:calendar-minimalistic-linear', id: 'calendar', label: 'Calendar' },
+      ];
+    }
+    
+    return [
+      { icon: 'solar:widget-linear', id: 'dashboard', label: 'Dashboard' },
+      userRole === 'talent'
+        ? { icon: 'solar:buildings-2-linear', id: 'companies', label: 'Companies' }
+        : { icon: 'solar:users-group-rounded-linear', id: 'people', label: 'People' },
+      { icon: 'solar:suitcase-linear', id: 'jobs', label: 'Jobs' },
+      { icon: 'solar:user-speak-linear', id: 'referrals', label: 'Referrals' },
+      { icon: 'solar:document-text-linear', id: 'documents', label: 'Documents' },
+      { icon: 'solar:calendar-minimalistic-linear', id: 'calendar', label: 'Calendar' },
+      { icon: 'solar:chart-square-linear', id: 'reports', label: 'Reports' },
+      { icon: 'solar:star-fall-2-linear', id: 'ai', label: 'AI Tools' },
+    ];
+  };
+
+  const navIcons = getNavIcons();
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
@@ -32,19 +48,25 @@ const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen, onLogout }) 
               onClick={() => onModuleChange(item.id)}
             >
               <Icon icon={item.icon} className="sidebar-icon" />
+              <span className="sidebar-label">{item.label}</span>
             </button>
           ))}
         </div>
       </div>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-toggle">
-          <div className="toggle-track">
+        <button className="sidebar-icon-btn settings-btn" onClick={onSettings}>
+          <Icon icon="solar:settings-linear" className="sidebar-icon" />
+          <span className="sidebar-label">Settings</span>
+        </button>
+        <div className="sidebar-toggle" onClick={onThemeToggle}>
+          <div className={`toggle-track ${theme === 'dark' ? 'active' : ''}`}>
             <div className="toggle-thumb" />
           </div>
         </div>
         <button className="sidebar-icon-btn logout-btn" onClick={onLogout}>
           <Icon icon="solar:logout-linear" className="sidebar-icon" />
+          <span className="sidebar-label">Logout</span>
         </button>
       </div>
     </div>

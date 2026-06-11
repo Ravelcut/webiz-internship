@@ -44,7 +44,7 @@ const statusOptions = Object.entries(EnumLabels.TaskState).map(([value, label]) 
   };
 });
 
-const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
+const TaskRow = ({ task, onOpenComments, onUpdateTask, onSelectTask }) => {
   const handlePriorityChange = (newPriority) => {
     onUpdateTask(task.id, {
       priority: newPriority,
@@ -62,7 +62,7 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
   };
 
   return (
-    <div className="task-row">
+    <div className="task-row" onClick={() => onSelectTask && onSelectTask(task)}>
       <div className="cell cell-checkbox" onClick={(e) => { 
         e.stopPropagation(); 
         const isNowCompleted = !task.completed;
@@ -79,13 +79,13 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
       </div>
 
       <div className="cell cell-comments">
-        <div className="comment-counter-wrapper" onClick={() => onOpenComments && onOpenComments(task)}>
+        <div className="comment-counter-wrapper" onClick={(e) => { e.stopPropagation(); onOpenComments && onOpenComments(task); }}>
           <Icon icon="solar:chat-round-line-linear" className="comment-msg-icon" />
           <span className="comments-badge">{task.comments}</span>
         </div>
       </div>
 
-      <div className="cell cell-priority">
+      <div className="cell cell-priority" onClick={(e) => e.stopPropagation()}>
         <InlineDropdown
           options={priorityOptions}
           value={task.priority}
@@ -107,9 +107,9 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
         <div className="assignee-wrapper">
           <div className="assignee-info">
             <div className="avatar-circle">
-              <span>{task.assignee.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+              <span>{task.assignee ? task.assignee.split(' ').map(n => n[0]).join('').slice(0, 2) : 'U'}</span>
             </div>
-            <span className="assignee-name">{task.assignee}</span>
+            <span className="assignee-name">{task.assignee || 'Unassigned'}</span>
           </div>
           <div className="entity-icon-wrapper">
             <Icon
@@ -131,7 +131,7 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
         )}
       </div>
 
-      <div className="cell cell-status">
+      <div className="cell cell-status" onClick={(e) => e.stopPropagation()}>
         <InlineDropdown
           options={statusOptions}
           value={task.status}
@@ -152,7 +152,7 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask }) => {
   );
 };
 
-const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask }) => {
+const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask, onSelectTask }) => {
   if (!tasks || tasks.length === 0) {
     return <EmptyState onAction={onNewTask} />;
   }
@@ -177,6 +177,7 @@ const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask }) => {
                   task={task}
                   onOpenComments={onOpenComments}
                   onUpdateTask={onUpdateTask}
+                  onSelectTask={onSelectTask}
                 />
               ))}
             </div>

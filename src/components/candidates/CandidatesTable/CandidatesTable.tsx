@@ -1,10 +1,35 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import './CandidatesTable.css';
 
-const CandidatesTable = ({ candidates, onNewTask, onSelectCandidate }) => {
+const CandidatesTable = ({ 
+  candidates, 
+  onNewTask, 
+  onSelectCandidate,
+  onPreviewCV,
+  onDeleteCandidate,
+  onSendActivation,
+  onAddToJob,
+  onFindSimilar
+}) => {
   const [activeMenu, setActiveMenu] = useState(null);
+
+  useEffect(() => {
+    if (activeMenu === null) return;
+
+    const handleOutsideClick = (event) => {
+      const container = document.querySelector(`.menu-container[data-candidate-id="${activeMenu}"]`);
+      if (container && !container.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [activeMenu]);
 
   const handleAction = (e, candidate, action) => {
     e.stopPropagation();
@@ -118,7 +143,7 @@ const CandidatesTable = ({ candidates, onNewTask, onSelectCandidate }) => {
               </td>
               <td className="cv-cell">
                 {candidate.cv ? (
-                  <div className="cv-link" onClick={(e) => e.stopPropagation()}>
+                  <div className="cv-link" onClick={(e) => { e.stopPropagation(); onPreviewCV?.(candidate); }}>
                     <Icon icon="solar:file-download-linear" className="cv-icon" />
                     <span className="cv-filename">{candidate.cv}</span>
                   </div>
@@ -127,7 +152,11 @@ const CandidatesTable = ({ candidates, onNewTask, onSelectCandidate }) => {
                 )}
               </td>
               <td className="action-cell">
-                <div className="menu-container" style={{ position: 'relative' }}>
+                <div 
+                  className="menu-container" 
+                  data-candidate-id={candidate.id}
+                  style={{ position: 'relative', zIndex: 1005 }}
+                >
                   <button 
                     className="action-menu-btn"
                     onClick={(e) => {
@@ -139,41 +168,70 @@ const CandidatesTable = ({ candidates, onNewTask, onSelectCandidate }) => {
                   </button>
                   
                   {activeMenu === candidate.id && (
-                    <>
-                      <div className="menu-overlay" onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveMenu(null);
-                      }} />
-                      <div className="action-dropdown shadow-premium" onClick={(e) => e.stopPropagation()}>
-                        <button className="dropdown-item">
-                          <Icon icon="iconamoon:send-light" />
-                          <span>Send activation</span>
-                        </button>
-                        <button className="dropdown-item">
-                          <Icon icon="ph:plus-light" />
-                          <span>Add to job</span>
-                        </button>
-                        <button 
-                          className="dropdown-item"
-                          onClick={(e) => handleAction(e, candidate, 'create-task')}
-                        >
-                          <Icon icon="solar:list-check-linear" />
-                          <span>Create a Task</span>
-                        </button>
-                        <button className="dropdown-item">
-                          <Icon icon="solar:magnifer-linear" />
-                          <span>Find similar</span>
-                        </button>
-                        <button className="dropdown-item">
-                          <Icon icon="solar:eye-linear" />
-                          <span>Preview CV</span>
-                        </button>
-                        <button className="dropdown-item">
-                          <Icon icon="solar:trash-bin-trash-linear" />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-                    </>
+                    <div className="action-dropdown shadow-premium" onClick={(e) => e.stopPropagation()}>
+                      <button 
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                          onSendActivation?.(candidate);
+                        }}
+                      >
+                        <Icon icon="iconamoon:send-light" />
+                        <span>Send activation</span>
+                      </button>
+                      <button 
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                          onAddToJob?.(candidate);
+                        }}
+                      >
+                        <Icon icon="ph:plus-light" />
+                        <span>Add to job</span>
+                      </button>
+                      <button 
+                        className="dropdown-item"
+                        onClick={(e) => handleAction(e, candidate, 'create-task')}
+                      >
+                        <Icon icon="solar:list-check-linear" />
+                        <span>Create a Task</span>
+                      </button>
+                      <button 
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                          onFindSimilar?.(candidate);
+                        }}
+                      >
+                        <Icon icon="solar:magnifer-linear" />
+                        <span>Find similar</span>
+                      </button>
+                      <button 
+                        className="dropdown-item"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                          onPreviewCV?.(candidate);
+                        }}
+                      >
+                        <Icon icon="solar:eye-linear" />
+                        <span>Preview CV</span>
+                      </button>
+                      <button 
+                        className="dropdown-item delete"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenu(null);
+                          onDeleteCandidate?.(candidate.id);
+                        }}
+                      >
+                        <Icon icon="solar:trash-bin-trash-linear" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
                   )}
                 </div>
               </td>
@@ -186,3 +244,4 @@ const CandidatesTable = ({ candidates, onNewTask, onSelectCandidate }) => {
 };
 
 export default CandidatesTable;
+
