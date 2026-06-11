@@ -60,8 +60,8 @@ const OWNER_OPTIONS = ['Woody Harrelson', 'Devon Lane', 'Cameron Williamson', 'E
 
 const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = [], employees = [], taskToEdit = null, onUpdateTask }) => {
   const [title, setTitle] = useState('');
-  const [status, setStatus] = useState('');
-  const [priority, setPriority] = useState('');
+  const [status, setStatus] = useState(TaskState.Pending);
+  const [priority, setPriority] = useState(TaskPriority.Medium);
   const [dueDate, setDueDate] = useState('');
   const [time, setTime] = useState('');
   const [entityType, setEntityType] = useState('');
@@ -79,7 +79,7 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
     if (isOpen && taskToEdit) {
       setTitle(taskToEdit.title || '');
       setStatus(taskToEdit.status !== undefined ? taskToEdit.status : '');
-      setPriority(taskToEdit.priority !== undefined ? taskToEdit.priority : '');
+      setPriority(taskToEdit.priority !== undefined ? taskToEdit.priority : TaskPriority.Medium);
       
       // Convert due date
       let dateVal = '';
@@ -265,8 +265,8 @@ const NewTaskModal = ({ isOpen, onClose, onCreateTask, initialEntity, talents = 
 
   const resetForm = () => {
     setTitle('');
-    setStatus('');
-    setPriority('');
+    setStatus(TaskState.Pending);
+    setPriority(TaskPriority.Medium);
     setDueDate('');
     setTime('');
     setEntityType('');

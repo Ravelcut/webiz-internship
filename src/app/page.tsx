@@ -287,7 +287,7 @@ function App() {
       const createdTask = await companyService.createAssignment({
         title: taskData.title,
         description: taskData.description || "",
-        priority: taskData.priority,
+        priority: taskData.priority !== '' && taskData.priority !== undefined ? taskData.priority : TaskPriority.Medium,
         talentId: taskData.talentId,
         employeeId: taskData.employeeId,
         dueDate: taskData.dueDate || null
@@ -393,8 +393,8 @@ function App() {
             assignmentId: taskId,
             title: updatedTask.title,
             description: updatedTask.description || "",
-            priority: updatedTask.priority,
-            taskState: updatedTask.status,
+            priority: updatedTask.priority !== '' && updatedTask.priority !== undefined ? updatedTask.priority : TaskPriority.Medium,
+            taskState: updatedTask.status !== '' && updatedTask.status !== undefined ? updatedTask.status : TaskState.Pending,
             dueDate: convertToBackendDate(updatedTask.dueDate)
           };
           await companyService.updateAssignment(payload);
