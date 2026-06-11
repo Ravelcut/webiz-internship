@@ -16,8 +16,8 @@ const JobDetail = ({ job = { title: 'Front End Developer', status: 'Hired' }, on
   ];
 
   const candidates = [];
-  if (job?.rawTask?.talent) {
-    const t = job.rawTask.talent;
+  if (job?.rawJob?.talent || job?.rawTask?.talent) {
+    const t = job.rawJob?.talent || job.rawTask?.talent;
     candidates.push({
       id: t.id || 999,
       name: `${t.name} ${t.lastname}`.trim() || t.email || 'Anonymous',

@@ -22,6 +22,7 @@ import { companyService } from '../services/companyService';
 import { authService } from '../services/authService';
 import { talentService } from '../services/talentService';
 import { recruiterService } from '../services/recruiterService';
+import { jobService } from '../services/jobService';
 import Login from '../components/auth/Login/Login';
 import TaskCommentsPanel from '../components/shared/TaskCommentsPanel/TaskCommentsPanel';
 import ProfileSettingsModal from '../components/shared/ProfileSettingsModal/ProfileSettingsModal';
@@ -164,6 +165,7 @@ function App() {
   const [isMounted, setIsMounted] = useState(false);
   const [theme, setTheme] = useState('light');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [jobsList, setJobsList] = useState([]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -224,21 +226,27 @@ function App() {
       let talents = [];
       let employees = [];
       let profileData = null;
+      let jobs = [];
 
       if (userRole === 'company') {
-        [assignments, talents, employees, profileData] = await Promise.all([
+        [assignments, talents, employees, profileData, jobs] = await Promise.all([
           companyService.getAssignments(),
           companyService.getTalents().catch(() => []),
           companyService.getEmployees().catch(() => []),
-          companyService.getProfile().catch(() => null)
+          companyService.getProfile().catch(() => null),
+          jobService.getCompanyJobs().catch(() => [])
         ]);
       } else if (userRole === 'talent') {
-        [assignments, profileData] = await Promise.all([
+        [assignments, profileData, jobs] = await Promise.all([
           talentService.getAssignments().catch(() => []),
-          talentService.getProfile().catch(() => null)
+          talentService.getProfile().catch(() => null),
+          jobService.getTalentJobs().catch(() => [])
         ]);
       } else if (userRole === 'recruiter') {
-        profileData = await recruiterService.getProfile().catch(() => null);
+        [profileData, jobs] = await Promise.all([
+          recruiterService.getProfile().catch(() => null),
+          jobService.getRecruiterJobs().catch(() => [])
+        ]);
       }
       
       const mappedAssignments = (assignments || []).map(a => mapBackendAssignmentToTask(a, talents, employees)).filter(Boolean);
@@ -246,6 +254,7 @@ function App() {
       setTalentsList(talents);
       setEmployeesList(employees);
       setProfile(profileData);
+      setJobsList(jobs);
       if (profileData) {
         localStorage.setItem('taskmanager_company_profile', JSON.stringify(profileData));
       }
@@ -547,7 +556,12 @@ function App() {
                 onBack={() => setSelectedJob(null)} 
               />
             ) : (
-              <JobsView listData={listData} onJobClick={setSelectedJob} />
+              <JobsView 
+                jobs={jobsList} 
+                onJobClick={setSelectedJob} 
+                onRefreshJobs={fetchData} 
+                userRole={userRole} 
+              />
             )
           ) : (
             <div className="content-card">

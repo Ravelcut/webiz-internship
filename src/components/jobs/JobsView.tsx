@@ -2,27 +2,16 @@
 import React, { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { jobsStats, jobsListData } from '../../data/mockData';
+import { jobService } from '../../services/jobService';
+import NewJobModal from '../shared/NewJobModal/NewJobModal';
 import './JobsView.css';
 
-const JobsView = ({ listData = [], onJobClick }) => {
+const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [openDropdownId, setOpenDropdownId] = useState(null);
-
-  const prioritySeniority = {
-    'Low': 'Junior',
-    'Medium': 'Middle',
-    'High': 'Senior',
-    'Critical': 'Lead',
-    'Lowest': 'Intern'
-  };
-
-  const stateStatus = {
-    'Pending': 'Active',
-    'InProgress': 'Active',
-    'InReview': 'Active',
-    'Done': 'Hired'
-  };
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedJobToEdit, setSelectedJobToEdit] = useState(null);
 
   const statusColors = {
     'Active': '#2F80ED',
@@ -30,26 +19,26 @@ const JobsView = ({ listData = [], onJobClick }) => {
     'Frozen': '#ED5757',
   };
 
-  const jobs = listData.length > 0 
-    ? listData.map((task) => {
-        const mappedStatus = stateStatus[task.status] || 'Active';
+  const displayJobs = jobs.length > 0 
+    ? jobs.map((job) => {
+        const mappedStatus = job.status || 'Active';
         return {
-          id: `#${task.id}`,
-          title: task.title,
-          seniority: prioritySeniority[task.priority] || 'Middle',
-          salaryType: 'Gross',
-          salaryRange: 'Negotiable',
+          id: `#${job.id}`,
+          title: job.title || 'Untitled Position',
+          seniority: job.seniority || 'Middle',
+          salaryType: job.salaryType || 'Gross',
+          salaryRange: job.salaryRange || 'Negotiable',
           status: mappedStatus,
           statusColor: statusColors[mappedStatus] || '#2F80ED',
-          rawTask: task
+          rawJob: job
         };
       })
-    : jobsListData;
+    : jobsListData.map(j => ({ ...j, id: `#${j.id}` })); // Ensure fallback also has '#' prefix for visual consistency
 
-  const totalCount = jobs.length;
-  const activeCount = jobs.filter(j => j.status === 'Active').length;
-  const hiredCount = jobs.filter(j => j.status === 'Hired').length;
-  const frozenCount = jobs.filter(j => j.status === 'Frozen').length;
+  const totalCount = displayJobs.length;
+  const activeCount = displayJobs.filter(j => j.status === 'Active').length;
+  const hiredCount = displayJobs.filter(j => j.status === 'Hired').length;
+  const frozenCount = displayJobs.filter(j => j.status === 'Frozen').length;
 
   const stats = [
     { label: 'All Jobs', value: totalCount.toString(), icon: 'solar:suitcase-tag-bold', color: '#2F80ED' },
@@ -59,8 +48,8 @@ const JobsView = ({ listData = [], onJobClick }) => {
   ];
 
   const filteredJobs = activeFilter === 'All'
-    ? jobs
-    : jobs.filter(j => j.status.toLowerCase() === activeFilter.toLowerCase());
+    ? displayJobs
+    : displayJobs.filter(j => j.status.toLowerCase() === activeFilter.toLowerCase());
 
   const filters = [
     { label: 'All', color: '#2F80ED' },
@@ -70,12 +59,72 @@ const JobsView = ({ listData = [], onJobClick }) => {
   ];
 
   const dropdownItems = [
-    { label: 'Edit', icon: 'solar:pen-linear' },
-    { label: 'View as a Candidate', icon: 'solar:eye-linear' },
-    { label: 'Create a Task', icon: 'solar:list-check-linear' },
-    { label: 'Freeze', icon: 'solar:clock-circle-linear' },
-    { label: 'Delete', icon: 'solar:trash-bin-trash-linear', isDelete: true },
+    { label: 'Edit', icon: 'solar:pen-linear', action: 'edit' },
+    { label: 'Freeze', icon: 'solar:clock-circle-linear', action: 'freeze' },
+    { label: 'Delete', icon: 'solar:trash-bin-trash-linear', isDelete: true, action: 'delete' },
   ];
+
+  const handleCreateJob = async (payload) => {
+    try {
+      await jobService.createJob(payload);
+      onRefreshJobs?.();
+    } catch (error) {
+      console.error('Failed to create job:', error);
+    }
+  };
+
+  const handleUpdateJob = async (payload) => {
+    try {
+      await jobService.updateJob(payload);
+      onRefreshJobs?.();
+    } catch (error) {
+      console.error('Failed to update job:', error);
+    }
+  };
+
+  const handleDeleteJob = async (jobId) => {
+    if (window.confirm('Are you sure you want to delete this job listing?')) {
+      try {
+        const cleanId = typeof jobId === 'string' && jobId.startsWith('#') ? Number(jobId.substring(1)) : Number(jobId);
+        await jobService.deleteJob(cleanId);
+        onRefreshJobs?.();
+      } catch (error) {
+        console.error('Failed to delete job:', error);
+      }
+    }
+  };
+
+  const handleToggleFreezeJob = async (job) => {
+    try {
+      const newStatus = job.status === 'Frozen' ? 'Active' : 'Frozen';
+      const jobId = job.rawJob?.id || job.id;
+      const cleanId = typeof jobId === 'string' && jobId.startsWith('#') ? Number(jobId.substring(1)) : Number(jobId);
+      
+      await jobService.updateJob({
+        jobId: cleanId,
+        title: job.title,
+        seniority: job.seniority,
+        salaryType: job.salaryType,
+        salaryRange: job.salaryRange,
+        status: newStatus
+      });
+      onRefreshJobs?.();
+    } catch (error) {
+      console.error('Failed to toggle freeze job:', error);
+    }
+  };
+
+  const handleDropdownAction = (action, job) => {
+    setOpenDropdownId(null);
+    if (action === 'edit') {
+      setSelectedJobToEdit(job.rawJob || job);
+      setIsModalOpen(true);
+    } else if (action === 'delete') {
+      handleDeleteJob(job.id);
+    } else if (action === 'freeze') {
+      handleToggleFreezeJob(job);
+    }
+  };
 
   return (
     <div className="jobs-view animate-fade-in">
@@ -134,10 +183,15 @@ const JobsView = ({ listData = [], onJobClick }) => {
               </button>
             </div>
 
-            <button className="new-job-btn">
-              <Icon icon="solar:add-circle-linear" />
-              New job
-            </button>
+            {userRole === 'company' && (
+              <button className="new-job-btn" onClick={() => {
+                setSelectedJobToEdit(null);
+                setIsModalOpen(true);
+              }}>
+                <Icon icon="solar:add-circle-linear" />
+                New job
+              </button>
+            )}
           </div>
         </div>
 
@@ -155,32 +209,43 @@ const JobsView = ({ listData = [], onJobClick }) => {
                   <span className="job-id">{job.id}</span>
                   <span className="job-title">{job.title}</span>
                 </div>
-                <button 
-                  className="more-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenDropdownId(openDropdownId === job.id ? null : job.id);
-                  }}
-                >
-                  <Icon icon="solar:menu-dots-bold" />
-                </button>
+                
+                {userRole === 'company' && (
+                  <>
+                    <button 
+                      className="more-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenDropdownId(openDropdownId === job.id ? null : job.id);
+                      }}
+                    >
+                      <Icon icon="solar:menu-dots-bold" />
+                    </button>
 
-                {openDropdownId === job.id && (
-                  <div className="action-dropdown shadow-premium">
-                    {dropdownItems.map((item, idx) => (
-                      <div 
-                        key={idx} 
-                        className={`dropdown-item ${item.isDelete ? 'delete' : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenDropdownId(null);
-                        }}
-                      >
-                        <Icon icon={item.icon} />
-                        <span>{item.label}</span>
+                    {openDropdownId === job.id && (
+                      <div className="action-dropdown shadow-premium">
+                        {dropdownItems.map((item, idx) => {
+                          // Toggle label based on current status
+                          const itemLabel = item.action === 'freeze' && job.status === 'Frozen' ? 'Unfreeze' : item.label;
+                          const itemIcon = item.action === 'freeze' && job.status === 'Frozen' ? 'solar:play-circle-linear' : item.icon;
+                          
+                          return (
+                            <div 
+                              key={idx} 
+                              className={`dropdown-item ${item.isDelete ? 'delete' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDropdownAction(item.action, job);
+                              }}
+                            >
+                              <Icon icon={itemIcon} />
+                              <span>{itemLabel}</span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
 
@@ -215,6 +280,17 @@ const JobsView = ({ listData = [], onJobClick }) => {
           ))}
         </div>
       </div>
+
+      <NewJobModal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedJobToEdit(null);
+        }}
+        onCreateJob={handleCreateJob}
+        onUpdateJob={handleUpdateJob}
+        jobToEdit={selectedJobToEdit}
+      />
     </div>
   );
 };
