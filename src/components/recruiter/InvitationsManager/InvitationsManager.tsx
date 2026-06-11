@@ -74,8 +74,9 @@ const InvitationsManager = () => {
   const handleRequestToJoin = async (companyId) => {
     setActionLoading(`join-${companyId}`);
     try {
-      const result = await recruiterService.requestToJoin(companyId);
-      setJoinRequests(prev => [...prev, result]);
+      await recruiterService.requestToJoin(companyId);
+      const jrs = await recruiterService.getJoinRequests().catch(() => []);
+      setJoinRequests(jrs || []);
       setSuccessMsg('Join request sent!');
     } catch (err) {
       setError('Failed to send join request.');
