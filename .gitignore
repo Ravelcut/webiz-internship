@@ -29,3 +29,4 @@ certificates
 .next/
 *.tsbuildinfo
 out/
+cookies.txt
