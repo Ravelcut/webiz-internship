@@ -409,6 +409,18 @@ export default function QuickstartPage() {
           </div>
         </div>
 
+        {/* Info Domain Highlight Callout */}
+        <div className="disclaimer-card" style={{ background: 'rgba(192, 132, 252, 0.05)', borderLeftColor: '#c084fc' }}>
+          <Icon icon="solar:info-square-bold-duotone" className="disclaimer-icon" style={{ color: '#c084fc' }} />
+          <div className="disclaimer-content">
+            <h4 className="disclaimer-title" style={{ color: '#7b2cb5' }}>Interactive Evaluation Hub</h4>
+            <p className="disclaimer-text">
+              This Quickstart page is part of our integrated <strong>/info domain</strong>. Use the navigation bar above or the links below to explore the live, database-synchronized <strong>API Endpoints Catalog</strong>, real-time <strong>GitHub Commits Timeline</strong>, and the <strong>Product Showcase Video</strong>! All detailed information is dynamically rendered in these dedicated sections.
+            </p>
+          </div>
+        </div>
+
+
         {/* Core Layout Grid */}
         <div className="quickstart-grid">
           
@@ -678,6 +690,34 @@ export default function QuickstartPage() {
               </div>
             </div>
 
+            {/* GitHub Repositories Card */}
+            <div className="content-card">
+              <div className="card-header-row">
+                <Icon icon="solar:git-repository-linear" className="card-icon" />
+                <h2 className="card-title">GitHub Repositories</h2>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <a 
+                  href="https://github.com/Ravelcut/webiz-internship.git" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="link-card"
+                >
+                  <Icon icon="logos:github-icon" className="link-card-icon" />
+                  <span className="link-card-text">Frontend Repository</span>
+                </a>
+                <a 
+                  href="https://github.com/Ravelcut/webiz-internship-backend.git" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  className="link-card"
+                >
+                  <Icon icon="logos:github-icon" className="link-card-icon" style={{ filter: 'hue-rotate(120deg)' }} />
+                  <span className="link-card-text">Backend Repository</span>
+                </a>
+              </div>
+            </div>
+
             {/* Quick Links Nav Card */}
             <div className="content-card" style={{ gap: '16px' }}>
               <div className="card-header-row" style={{ paddingBottom: '12px' }}>
@@ -707,6 +747,7 @@ export default function QuickstartPage() {
                 <span className="link-card-text" style={{ color: 'var(--blue)' }}>View Personal Contribution Report</span>
               </a>
             </div>
+
 
           </div>
 
