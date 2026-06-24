@@ -613,11 +613,101 @@ export default function QuickstartPage() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            </div>
+
+            {/* Step-by-Step Evaluation Walkthrough Card */}
+            <div className="content-card">
+              <div className="card-header-row">
+                <Icon icon="solar:checklist-minimalistic-linear" className="card-icon" />
+                <h2 className="card-title">Step-by-Step Evaluation Walkthrough</h2>
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', fontSize: '14px', lineHeight: '1.6' }}>
+                
+                {/* Phase 1 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Phase 1: Project Checkout & Initialization
+                  </span>
+                  <p style={{ color: 'var(--black-75)' }}>
+                    To run and evaluate the complete project locally on any workstation, open your terminal and run the following checkout commands:
+                  </p>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '4px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--black-50)' }}>Clone the Frontend Web App:</span>
+                      <div className="terminal-block" style={{ padding: '12px' }}>
+                        <button className="terminal-copy-btn" onClick={() => handleCopy("git clone https://github.com/Ravelcut/webiz-internship.git", "clone-frontend")}>
+                          {copiedText === "clone-frontend" ? "Copied!" : "Copy"}
+                        </button>
+                        <code>$ git clone https://github.com/Ravelcut/webiz-internship.git</code>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: '600', color: 'var(--black-50)' }}>Clone the Backend REST API:</span>
+                      <div className="terminal-block" style={{ padding: '12px' }}>
+                        <button className="terminal-copy-btn" onClick={() => handleCopy("git clone https://github.com/Ravelcut/webiz-internship-backend.git", "clone-backend")}>
+                          {copiedText === "clone-backend" ? "Copied!" : "Copy"}
+                        </button>
+                        <code>$ git clone https://github.com/Ravelcut/webiz-internship-backend.git</code>
+                      </div>
+                    </div>
+                  </div>
+                  <p style={{ color: 'var(--black-75)', fontSize: '13px', marginTop: '4px', fontStyle: 'italic' }}>
+                    Note: For both repositories, make sure to checkout the <strong>development</strong> or <strong>main</strong> branch to get the latest features and seeded evaluation datasets.
+                  </p>
+                </div>
+
+                {/* Phase 2 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px dashed var(--stroke-gray)', paddingTop: '16px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Phase 2: Interactive Role-Based Testing
+                  </span>
+                  <p style={{ color: 'var(--black-75)' }}>
+                    Once both services are running locally, open <strong>http://localhost:3000</strong> and log in under different roles to experience the state-persistent workspace:
+                  </p>
+                  
+                  <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '12px', color: 'var(--black-75)' }}>
+                    <li>
+                      <strong>🏢 Company Workspace (Admin Flow):</strong>
+                      <br />
+                      Log in as <code>ops@quantum-leap.com</code>. Try creating a new task, assigning it to <em>Alex Mercer</em>, and dragging it across the <strong>Kanban Board</strong>. Then, head to the <strong>Talents Directory</strong> and send a recruitment invitation to <em>Alan Turing</em>.
+                    </li>
+                    <li>
+                      <strong>⚡ Talent Workspace (Collaborator Flow):</strong>
+                      <br />
+                      Log in as <code>alan.turing@talent.net</code>. You will see a real-time notification banner at the top of your dashboard. Click <strong>Accept Invitation</strong>. You will instantly join the company workspace, see tasks assigned to you, edit their completion state, and post replies in the <strong>Comments Drawer</strong>.
+                    </li>
+                    <li>
+                      <strong>🤝 Recruiter Workspace (Pipeline Monitor Flow):</strong>
+                      <br />
+                      Log in as <code>garry.kasparov@recruiter.net</code>. Monitor active job positions, track recruitment stages, and send requests to collaborate with companies.
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Phase 3 */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', borderTop: '1px dashed var(--stroke-gray)', paddingTop: '16px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: '700', color: 'var(--blue)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Phase 3: Interactive System Audit
+                  </span>
+                  <p style={{ color: 'var(--black-75)' }}>
+                    Use our built-in <strong>Evaluation Hub</strong> tools in the top navigation to inspect the project architecture:
+                  </p>
+                  <ul style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--black-75)' }}>
+                    <li>Explore the <strong>API Endpoints Catalog</strong> to review REST method specifications, request/response DTOs, and role-based permissions.</li>
+                    <li>Browse the <strong>Commit History Timeline</strong> to track progressive repository changes and frontend commits.</li>
+                    <li>Watch the <strong>Showcase Video</strong> for a guided visual demonstration of the entire system lifecycle.</li>
+                  </ul>
+                </div>
 
               </div>
             </div>
 
           </div>
+
 
           {/* Right Column: Visual Architecture Flow */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
