@@ -706,13 +706,17 @@ export default function CommitsPage() {
       <div className="commits-container">
         {/* Header */}
         <div className="commits-header">
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
             <Link href="/" className="back-link">
               <Icon icon="lucide:arrow-left" /> Back to Workspace
             </Link>
             <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
             <Link href="/info/endpoints" className="back-link">
               <Icon icon="lucide:api" /> API Endpoints
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/showcase" className="back-link">
+              <Icon icon="lucide:video" /> Showcase Video
             </Link>
           </div>
           <div className="commits-title-area">

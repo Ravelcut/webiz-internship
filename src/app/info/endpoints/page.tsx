@@ -822,7 +822,7 @@ export default function EndpointsPage() {
       <div className="endpoints-container">
         {/* Header */}
         <div className="endpoints-header">
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
             <Link href="/" className="back-link">
               <Icon icon="mdi:arrow-left" width="18" />
               მთავარზე დაბრუნება
@@ -830,6 +830,10 @@ export default function EndpointsPage() {
             <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
             <Link href="/info/commits" className="back-link">
               <Icon icon="mdi:git" width="18" /> GitHub კომიტები
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/showcase" className="back-link">
+              <Icon icon="mdi:video" width="18" /> პროექტის პრეზენტაცია (Showcase)
             </Link>
           </div>
           <div className="endpoints-title-area">

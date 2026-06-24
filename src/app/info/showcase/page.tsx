@@ -249,10 +249,20 @@ export default function ShowcasePage() {
       <div className="showcase-container">
         {/* Header section with back navigation */}
         <div className="showcase-header">
-          <Link href="/" className="back-link">
-            <Icon icon="carbon:arrow-left" />
-            უკან დაბრუნება (Dashboard)
-          </Link>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap' }}>
+            <Link href="/" className="back-link">
+              <Icon icon="carbon:arrow-left" />
+              უკან დაბრუნება (Dashboard)
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/endpoints" className="back-link">
+              <Icon icon="carbon:api" /> API ენდფოინთები
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/commits" className="back-link">
+              <Icon icon="carbon:git-commit" /> Commit-ების ისტორია
+            </Link>
+          </div>
           <div className="showcase-title-area">
             <h1 className="showcase-title">პროექტის ვიდეო პრეზენტაცია (Showcase)</h1>
             <p className="showcase-subtitle">
