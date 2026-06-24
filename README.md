@@ -111,10 +111,42 @@ The project adheres to a strict Design System defined in `src/index.css`.
    npm run build
    ```
 
----
-
 ## 📝 Maintenance Notes
 
 - When adding new icons, prefer the `solar:` set from Iconify to maintain visual consistency.
 - Ensure all new modals use the `ntm-backdrop` system to handle z-index and focus trapping.
 - Keep components modular: if a widget exceeds 200 lines, consider breaking it into sub-components in its local directory.
+
+---
+
+## 👥 Demo Accounts & Roles
+
+> [!IMPORTANT]
+> **Security & Demo Disclaimer:**  
+> All data and user accounts in this system are seeded for testing and demonstration purposes only via the backend's `DataSeed.cs` file. **They do not contain any real or confidential user personal information.**
+
+To test the role-based (Role-Based) functionality of the system, you can use the following seeded demo accounts:
+
+*   **Company Administrator (Company):**
+    *   **Email:** `ops@quantum-leap.com` | **Password:** `K9#zL&2pQ!vR5tB*` (Quantum Leap AI)
+    *   **Email:** `hr@green-grid.org` | **Password:** `mX7$vN1_kP9@jH2s` (Green Grid Energy)
+*   **Recruiter (Recruiter):**
+    *   **Email:** `garry.kasparov@recruiter.net` | **Password:** `G@rryK!sp#88` (Garry Kasparov)
+
+
+*   **Talent / Candidate (Talent):**
+    *   **Email:** `alex.mercer@talent.net` | **Password:** `A1@xM!rC3r#99` (Alex Mercer)
+    *   **Email:** `riley.reid@talent.net` | **Password:** `R!l3yR3!d$77` (Riley Reid)
+
+---
+
+## 📄 Personal Contribution
+
+My individual contributions to the development of the Task Manager platform on the Frontend (Next.js & TypeScript) include the following core areas:
+1.  **Authentication & Session Management:** Integrated cookie-based authentication (Cookie-Based Auth) and implemented role-based dynamic workspaces (Workspaces).
+2.  **Task Management Modules:** Designed and built the interactive Kanban Board with Drag & Drop functionality, a timeline-based Planner View, a dense Task Table, and universal modal windows for task creation and editing.
+3.  **Collaboration & Comments:** Built the real-time Task Comments side panel with nested reply threads, edit/delete lifecycles, and company-recruiter collaboration invitation modules.
+4.  **Info Explorers:** Implemented interactive dashboards for exploring active REST API endpoints, viewing real-time Git commit history, and embedding the product walkthrough video.
+
+For a comprehensive, step-by-step breakdown of created components, files, API connections, and the full list of Git commits, please refer to the **[Personal Contribution Report](./PERSONAL_CONTRIBUTION_REPORT.md)**.
+

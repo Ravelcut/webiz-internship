@@ -255,6 +255,10 @@ export default function ShowcasePage() {
               უკან დაბრუნება (Dashboard)
             </Link>
             <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/quickstart" className="back-link">
+              <Icon icon="carbon:rocket" /> Quickstart Guide
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
             <Link href="/info/endpoints" className="back-link">
               <Icon icon="carbon:api" /> API ენდფოინთები
             </Link>
@@ -263,6 +267,7 @@ export default function ShowcasePage() {
               <Icon icon="carbon:git-commit" /> Commit-ების ისტორია
             </Link>
           </div>
+
           <div className="showcase-title-area">
             <h1 className="showcase-title">პროექტის ვიდეო პრეზენტაცია (Showcase)</h1>
             <p className="showcase-subtitle">

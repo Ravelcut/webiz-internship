@@ -711,6 +711,10 @@ export default function CommitsPage() {
               <Icon icon="lucide:arrow-left" /> Back to Workspace
             </Link>
             <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/quickstart" className="back-link">
+              <Icon icon="lucide:rocket" /> Quickstart Guide
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
             <Link href="/info/endpoints" className="back-link">
               <Icon icon="lucide:api" /> API Endpoints
             </Link>
@@ -719,6 +723,7 @@ export default function CommitsPage() {
               <Icon icon="lucide:video" /> Showcase Video
             </Link>
           </div>
+
           <div className="commits-title-area">
             <h1 className="commits-title">
               <Icon icon="lucide:git-branch" style={{ color: 'var(--blue)' }} /> GitHub Commits

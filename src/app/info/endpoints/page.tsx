@@ -828,6 +828,10 @@ export default function EndpointsPage() {
               მთავარზე დაბრუნება
             </Link>
             <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
+            <Link href="/info/quickstart" className="back-link">
+              <Icon icon="mdi:rocket" width="18" /> Quickstart Guide
+            </Link>
+            <span style={{ color: 'var(--black-50)', opacity: 0.5 }}>|</span>
             <Link href="/info/commits" className="back-link">
               <Icon icon="mdi:git" width="18" /> GitHub კომიტები
             </Link>
@@ -836,6 +840,7 @@ export default function EndpointsPage() {
               <Icon icon="mdi:video" width="18" /> პროექტის პრეზენტაცია (Showcase)
             </Link>
           </div>
+
           <div className="endpoints-title-area">
             <h1 className="endpoints-title">HRTodo API ენდპოინტები</h1>
             <p className="endpoints-subtitle">

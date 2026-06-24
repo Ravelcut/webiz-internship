@@ -55,10 +55,15 @@ const Sidebar = ({ activeModule, onModuleChange, isOpen, setIsOpen, onLogout, us
       </div>
 
       <div className="sidebar-bottom">
+        <button className="sidebar-icon-btn quickstart-btn" onClick={() => window.location.href = '/info/quickstart'}>
+          <Icon icon="solar:rocket-linear" className="sidebar-icon" style={{ color: '#08AC16' }} />
+          <span className="sidebar-label" style={{ color: '#08AC16', fontWeight: 'bold' }}>Quickstart Guide</span>
+        </button>
         <button className="sidebar-icon-btn showcase-btn" onClick={() => window.location.href = '/info/showcase'}>
           <Icon icon="solar:video-library-linear" className="sidebar-icon" style={{ color: '#c084fc' }} />
           <span className="sidebar-label" style={{ color: '#c084fc', fontWeight: 'bold' }}>Showcase Video</span>
         </button>
+
         <button className="sidebar-icon-btn settings-btn" onClick={onSettings}>
           <Icon icon="solar:settings-linear" className="sidebar-icon" />
           <span className="sidebar-label">Settings</span>
