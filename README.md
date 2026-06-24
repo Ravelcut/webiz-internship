@@ -17,14 +17,22 @@ TaskManager Webiz is a premium, feature-rich task and talent management platform
 
 ```bash
 src/
-├── app/                 # Next.js App Router (page.tsx main app interface)
+├── app/                 # Next.js App Router
+│   ├── info/            # Informational sub-pages
+│   │   ├── commits/     # Git commit history visualization
+│   │   ├── endpoints/   # API documentation catalog
+│   │   └── showcase/    # Video presentation & walkthrough
+│   ├── layout.tsx       # Global root layout
+│   └── page.tsx         # Main interactive workspace dashboard
 ├── components/
+│   ├── auth/            # Login and session validation flows
 │   ├── board/           # Kanban Board implementation (Columns & Cards)
 │   ├── candidates/      # Talent management (Table, Detail View, CV widgets)
 │   ├── clients/         # Client & Company management (Overview & Detail)
 │   ├── jobs/            # Job application tracking & Job Detail views
 │   ├── layout/          # Global layout (Sidebar, TopHeader, Navigation)
 │   ├── planner/         # List-based planner (Today/Tomorrow/Upcoming)
+│   ├── recruiter/       # Recruiter panels & invitation/collaboration management
 │   ├── shared/          # Reusable high-fidelity components
 │   │   ├── NewTaskModal # Multi-functional task creation modal
 │   │   ├── TaskComments # Side-panel/Embedded discussion system
@@ -33,10 +41,15 @@ src/
 │   └── table/           # Advanced data tables
 ├── constants/           # Shared enums and styling maps
 ├── services/            # Axios API client integrations connecting to the C# Backend
-│   ├── api.ts           # Central API configuration
+│   ├── api.ts           # Central API Axios configuration
+│   ├── authService.ts   # Session authentication calls
+│   ├── commentService.ts# Task comments endpoints
+│   ├── companyService.ts# Company profile and task management endpoints
+│   ├── employeeService.ts# Employee mapping and profile endpoints
+│   ├── invitationService.ts# Invites and collaboration handlers
 │   ├── jobService.ts    # Job management endpoint bindings
-│   ├── talentService.ts # Talent profile and application handlers
-│   └── companyService.ts# Company profile and task management endpoints
+│   ├── recruiterService.ts# Recruiter verification and collaboration calls
+│   └── talentService.ts # Talent profile and application handlers
 └── index.css            # Global design tokens and base styles
 ```
 
