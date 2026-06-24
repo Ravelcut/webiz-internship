@@ -98,10 +98,6 @@ const ClientsTable = ({ clients, onNewTask, onSelectCompany }) => {
                     <Icon icon="solar:clipboard-list-linear" />
                     <span>Create a Task</span>
                   </button>
-                  <button className="dropdown-item delete" onClick={(e) => e.stopPropagation()}>
-                    <Icon icon="solar:trash-bin-trash-linear" />
-                    <span>Delete</span>
-                  </button>
                 </div>
               )}
             </div>

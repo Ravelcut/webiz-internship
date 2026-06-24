@@ -44,7 +44,7 @@ const statusOptions = Object.entries(EnumLabels.TaskState).map(([value, label]) 
   };
 });
 
-const TaskRow = ({ task, onOpenComments, onUpdateTask, onSelectTask }) => {
+const TaskRow = ({ task, onOpenComments, onUpdateTask, onDeleteTask, onSelectTask }) => {
   const handlePriorityChange = (newPriority) => {
     onUpdateTask(task.id, {
       priority: newPriority,
@@ -148,11 +148,23 @@ const TaskRow = ({ task, onOpenComments, onUpdateTask, onSelectTask }) => {
           </div>
         </InlineDropdown>
       </div>
+
+      <div className="cell cell-actions" onClick={(e) => e.stopPropagation()}>
+        <Icon icon="solar:alt-arrow-right-linear" className="chevron-icon" />
+        {onDeleteTask && (
+          <div className="delete-wrapper" onClick={(e) => {
+            e.stopPropagation();
+            onDeleteTask(task.id);
+          }}>
+            <Icon icon="solar:trash-bin-trash-linear" className="trash-icon" />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask, onSelectTask }) => {
+const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask, onDeleteTask, onSelectTask }) => {
   if (!tasks || tasks.length === 0) {
     return <EmptyState onAction={onNewTask} />;
   }
@@ -177,6 +189,7 @@ const TaskListView = ({ tasks, onNewTask, onOpenComments, onUpdateTask, onSelect
                   task={task}
                   onOpenComments={onOpenComments}
                   onUpdateTask={onUpdateTask}
+                  onDeleteTask={onDeleteTask}
                   onSelectTask={onSelectTask}
                 />
               ))}

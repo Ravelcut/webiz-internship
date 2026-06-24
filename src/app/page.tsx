@@ -275,7 +275,11 @@ function App() {
       });
       setBoardData(newBoardData);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      if (error.response?.status !== 401) {
+        console.error('Failed to fetch data:', error);
+      } else {
+        console.warn('Failed to fetch data: Unauthorized (session expired)');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -597,6 +601,7 @@ function App() {
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                       onUpdateTask={handleUpdateTask}
+                      onDeleteTask={userRole === 'company' ? handleDeleteTask : undefined}
                       onSelectTask={handleSelectTask}
                     />
                   </div>
@@ -610,6 +615,7 @@ function App() {
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                       onUpdateTask={handleUpdateTask}
+                      onDeleteTask={userRole === 'company' ? handleDeleteTask : undefined}
                       onSelectTask={handleSelectTask}
                     />
                   </div>
@@ -623,7 +629,7 @@ function App() {
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                       onUpdateTask={handleUpdateTask}
-                      onDeleteTask={handleDeleteTask}
+                      onDeleteTask={userRole === 'company' ? handleDeleteTask : undefined}
                       onSelectTask={handleSelectTask}
                     />
                   </div>
@@ -637,7 +643,7 @@ function App() {
                       onNewTask={() => setIsNewTaskOpen(true)}
                       onOpenComments={handleOpenComments}
                       onUpdateTask={handleUpdateTask}
-                      onDeleteTask={handleDeleteTask}
+                      onDeleteTask={userRole === 'company' ? handleDeleteTask : undefined}
                       onSelectTask={handleSelectTask}
                     />
                   </div>

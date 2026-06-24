@@ -277,3 +277,50 @@
   cursor: pointer;
   transition: background 0.15s ease;
 }
+
+.cell-actions {
+  width: 80px;
+  justify-content: flex-end;
+  padding-right: 16px;
+  gap: 8px;
+}
+
+.task-list-view .task-row .chevron-icon,
+.task-list-view .task-row .delete-wrapper {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.task-list-view .task-row:hover .chevron-icon,
+.task-list-view .task-row:hover .delete-wrapper {
+  opacity: 1;
+}
+
+.task-list-view .delete-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  background: #F5F8FD;
+  border-radius: 4px;
+}
+
+.task-list-view .delete-wrapper:hover {
+  background: #FFE5E5;
+}
+
+.task-list-view .delete-wrapper:hover .trash-icon {
+  color: #ED5757;
+}
+
+.task-list-view .trash-icon {
+  font-size: 16px;
+  color: #B4BDCE;
+}
+
+.task-list-view .chevron-icon {
+  font-size: 20px;
+  color: #B4BBC5;
+}

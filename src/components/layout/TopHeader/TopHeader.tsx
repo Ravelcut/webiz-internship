@@ -32,7 +32,11 @@ const TopHeader = ({ onMenuClick, activeModule, profile, userRole, onRefreshData
       const data = await talentService.getInvitations();
       setInvitations(data || []);
     } catch (err) {
-      console.error('Failed to fetch invitations:', err);
+      if (err.response?.status !== 401) {
+        console.error('Failed to fetch invitations:', err);
+      } else {
+        console.warn('Failed to fetch invitations: Unauthorized (session expired)');
+      }
       setInvitations([]);
     } finally {
       setIsLoadingInvitations(false);

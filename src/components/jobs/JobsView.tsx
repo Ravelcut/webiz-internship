@@ -94,14 +94,12 @@ const JobsView = ({ jobs = [], onJobClick, onRefreshJobs, userRole }) => {
   };
 
   const handleDeleteJob = async (jobId) => {
-    if (window.confirm('Are you sure you want to delete this job listing?')) {
-      try {
-        const cleanId = typeof jobId === 'string' && jobId.startsWith('#') ? Number(jobId.substring(1)) : Number(jobId);
-        await jobService.deleteJob(cleanId);
-        onRefreshJobs?.();
-      } catch (error) {
-        console.error('Failed to delete job:', error);
-      }
+    try {
+      const cleanId = typeof jobId === 'string' && jobId.startsWith('#') ? Number(jobId.substring(1)) : Number(jobId);
+      await jobService.deleteJob(cleanId);
+      onRefreshJobs?.();
+    } catch (error) {
+      console.error('Failed to delete job:', error);
     }
   };
 

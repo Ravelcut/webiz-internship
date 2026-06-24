@@ -205,12 +205,14 @@ const TaskTable = ({ tasks, variant, onNewTask, onOpenComments, onUpdateTask, on
             {!isCompleted && (
               <div className="cell actions-cell" onClick={(e) => e.stopPropagation()}>
                 <Icon icon="solar:alt-arrow-right-linear" className="chevron-icon" />
-                <div className="delete-wrapper" onClick={(e) => {
-                  e.stopPropagation();
-                  if (onDeleteTask) onDeleteTask(task.id);
-                }}>
-                  <Icon icon="solar:trash-bin-trash-linear" className="trash-icon" />
-                </div>
+                {onDeleteTask && (
+                  <div className="delete-wrapper" onClick={(e) => {
+                    e.stopPropagation();
+                    onDeleteTask(task.id);
+                  }}>
+                    <Icon icon="solar:trash-bin-trash-linear" className="trash-icon" />
+                  </div>
+                )}
               </div>
             )}
           </div>

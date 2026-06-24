@@ -27,8 +27,9 @@ const PRIORITY_OPTIONS = [
   { value: TaskPriority.Lowest, color: '#2F80ED' },
 ];
 
-const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority, onUpdateTask, onSelectTask }) => {
+const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority, onUpdateTask, onDeleteTask, onSelectTask }) => {
   const [isPriorityOpen, setIsPriorityOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const initials = card.assignee
     ? card.assignee.split(' ').map((n) => n[0]).join('').slice(0, 2)
     : '';
@@ -135,8 +136,51 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
               <Icon icon="solar:check-circle-linear" className="check-icon" />
             )}
           </div>
-          <div className="more-btn">
+          <div 
+            className="more-btn" 
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMenuOpen(!isMenuOpen);
+            }} 
+            onMouseLeave={() => setIsMenuOpen(false)} 
+            style={{ position: 'relative' }}
+          >
             <Icon icon="solar:menu-dots-bold" className="more-icon" />
+            {isMenuOpen && (
+              <div 
+                className="kanban-inline-dropdown"
+                style={{
+                  position: 'absolute', top: '100%', right: 0, background: '#FFFFFF',
+                  border: '1px solid #E6E6E6', borderRadius: '8px', padding: '4px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.1)', zIndex: 100, minWidth: '120px', marginTop: '4px'
+                }}
+              >
+                <div onClick={(e) => {
+                  e.stopPropagation();
+                  setIsMenuOpen(false);
+                  if (onSelectTask) onSelectTask(card);
+                }} style={{
+                  display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', 
+                  borderRadius: '4px', fontSize: '12px', color: '#182939', cursor: 'pointer'
+                }} onMouseEnter={(e) => e.currentTarget.style.background = '#F5F8FC'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                  <Icon icon="solar:pen-linear" style={{ fontSize: '14px' }} />
+                  <span>Edit Task</span>
+                </div>
+                {onDeleteTask && (
+                  <div onClick={(e) => {
+                    e.stopPropagation();
+                    setIsMenuOpen(false);
+                    onDeleteTask(card.id);
+                  }} style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 8px', 
+                    borderRadius: '4px', fontSize: '12px', color: '#ED5757', cursor: 'pointer'
+                  }} onMouseEnter={(e) => e.currentTarget.style.background = '#FFE5E5'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                    <Icon icon="solar:trash-bin-trash-linear" style={{ fontSize: '14px' }} />
+                    <span>Delete Task</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -186,7 +230,7 @@ const KanbanCard = ({ card, onOpenComments, provided, snapshot, onUpdatePriority
   );
 };
 
-const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask, onSelectTask }) => {
+const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask, onDeleteTask, onSelectTask }) => {
   return (
     <div className="kanban-column">
       <div className="column-header">
@@ -216,6 +260,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask, 
                     onOpenComments={onOpenComments}
                     onUpdatePriority={onUpdatePriority}
                     onUpdateTask={onUpdateTask}
+                    onDeleteTask={onDeleteTask}
                     provided={provided}
                     snapshot={snapshot}
                     onSelectTask={onSelectTask}
@@ -235,7 +280,7 @@ const KanbanColumn = ({ column, onOpenComments, onUpdatePriority, onUpdateTask, 
   );
 };
 
-const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateTask, onSelectTask }) => {
+const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateTask, onDeleteTask, onSelectTask }) => {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
@@ -333,6 +378,7 @@ const KanbanBoard = ({ columns, setColumns, onNewTask, onOpenComments, onUpdateT
             onOpenComments={onOpenComments} 
             onUpdatePriority={handleUpdatePriority}
             onUpdateTask={onUpdateTask}
+            onDeleteTask={onDeleteTask}
             onSelectTask={onSelectTask}
           />
         ))}

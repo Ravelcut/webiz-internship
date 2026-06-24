@@ -51,36 +51,34 @@ const CandidatesView = ({ onNewTask, onSelectCandidate }) => {
     const candidate = talents.find(c => c.id === candidateId);
     if (!candidate) return;
 
-    if (window.confirm(`Are you sure you want to remove ${candidate.name} from your talents list?`)) {
-      try {
-        await companyService.deleteTalent(candidateId);
-        
-        const updatedTalents = talents.filter(c => c.id !== candidateId);
-        setTalents(updatedTalents);
-        
-        const [allTalentsData, invitationsData] = await Promise.all([
-          companyService.getAllTalents().catch(() => []),
-          companyService.getTalentInvitations().catch(() => [])
-        ]);
-        setInvitations(invitationsData);
-        const acceptedIds = new Set(updatedTalents.map(t => t.id));
-        const pendingIds = new Set(
-          invitationsData
-            .filter(i => i.invitationStatus === 'Pending' || i.invitationStatus === 0)
-            .map(i => i.talentId)
-        );
-        const filteredAllTalents = allTalentsData.map(t => ({
-          id: t.id,
-          name: `${t.name} ${t.lastname}`.trim() || 'Anonymous',
-          email: t.email
-        })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
-        setAvailableTalents(filteredAllTalents);
+    try {
+      await companyService.deleteTalent(candidateId);
+      
+      const updatedTalents = talents.filter(c => c.id !== candidateId);
+      setTalents(updatedTalents);
+      
+      const [allTalentsData, invitationsData] = await Promise.all([
+        companyService.getAllTalents().catch(() => []),
+        companyService.getTalentInvitations().catch(() => [])
+      ]);
+      setInvitations(invitationsData);
+      const acceptedIds = new Set(updatedTalents.map(t => t.id));
+      const pendingIds = new Set(
+        invitationsData
+          .filter(i => i.invitationStatus === 'Pending' || i.invitationStatus === 0)
+          .map(i => i.talentId)
+      );
+      const filteredAllTalents = allTalentsData.map(t => ({
+        id: t.id,
+        name: `${t.name} ${t.lastname}`.trim() || 'Anonymous',
+        email: t.email
+      })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
+      setAvailableTalents(filteredAllTalents);
 
-        showToast(`${candidate.name} removed successfully!`, 'success');
-      } catch (err) {
-        console.error(err);
-        showToast('Failed to remove candidate. Please try again.', 'error');
-      }
+      showToast(`${candidate.name} removed successfully!`, 'success');
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to remove candidate. Please try again.', 'error');
     }
   };
 
@@ -126,10 +124,31 @@ const CandidatesView = ({ onNewTask, onSelectCandidate }) => {
   };
 
   const handleRevokeInvitation = async (invitationId) => {
-    if (window.confirm('Are you sure you want to revoke this invitation?')) {
-      try {
-        await companyService.revokeTalentInvitation(invitationId);
-        
+    try {
+      await companyService.revokeTalentInvitation(invitationId);
+      
+      const invitationsData = await companyService.getTalentInvitations().catch(() => []);
+      setInvitations(invitationsData);
+      
+      const allTalentsData = await companyService.getAllTalents().catch(() => []);
+      const acceptedIds = new Set(talents.map(t => t.id));
+      const pendingIds = new Set(
+        invitationsData
+          .filter(i => i.invitationStatus === 'Pending' || i.invitationStatus === 0)
+          .map(i => i.talentId)
+      );
+      const filteredAllTalents = allTalentsData.map(t => ({
+        id: t.id,
+        name: `${t.name} ${t.lastname}`.trim() || 'Anonymous',
+        email: t.email
+      })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
+      setAvailableTalents(filteredAllTalents);
+
+      showToast('Invitation revoked successfully!', 'success');
+    } catch (err) {
+      console.error(err);
+      if (err.response?.status === 404) {
+        // The invitation is already gone, so we refresh the state
         const invitationsData = await companyService.getTalentInvitations().catch(() => []);
         setInvitations(invitationsData);
         
@@ -146,33 +165,10 @@ const CandidatesView = ({ onNewTask, onSelectCandidate }) => {
           email: t.email
         })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
         setAvailableTalents(filteredAllTalents);
-
-        showToast('Invitation revoked successfully!', 'success');
-      } catch (err) {
-        console.error(err);
-        if (err.response?.status === 404) {
-          // The invitation is already gone, so we refresh the state
-          const invitationsData = await companyService.getTalentInvitations().catch(() => []);
-          setInvitations(invitationsData);
-          
-          const allTalentsData = await companyService.getAllTalents().catch(() => []);
-          const acceptedIds = new Set(talents.map(t => t.id));
-          const pendingIds = new Set(
-            invitationsData
-              .filter(i => i.invitationStatus === 'Pending' || i.invitationStatus === 0)
-              .map(i => i.talentId)
-          );
-          const filteredAllTalents = allTalentsData.map(t => ({
-            id: t.id,
-            name: `${t.name} ${t.lastname}`.trim() || 'Anonymous',
-            email: t.email
-          })).filter(t => !acceptedIds.has(t.id) && !pendingIds.has(t.id));
-          setAvailableTalents(filteredAllTalents);
-          
-          showToast('Invitation already revoked or does not exist.', 'success');
-        } else {
-          showToast('Failed to revoke invitation.', 'error');
-        }
+        
+        showToast('Invitation already revoked or does not exist.', 'success');
+      } else {
+        showToast('Failed to revoke invitation.', 'error');
       }
     }
   };
