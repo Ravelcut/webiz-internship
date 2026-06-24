@@ -136,6 +136,9 @@ export default function QuickstartPage() {
           display: flex;
           flex-direction: column;
           gap: 20px;
+          flex: none !important;
+          overflow: visible !important;
+          height: auto !important;
         }
 
         .card-header-row {
